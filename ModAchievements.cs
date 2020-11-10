@@ -10,12 +10,12 @@ namespace ModAchievements
     public class ModAchievements : MonoBehaviour
     {
         private static ModAchievements s_Instance;
-        private static HUDManager hUDManager;
-        private static MenuInGameManager menuInGameManager;
+        private static HUDManager s_HUDManager;
+        private static MenuInGameManager s_MenuInGameManager;
+        private static AchievementsManager s_AchievementsManager;
+        private static Player s_Player;
 
-        private static Player player;
-
-        private static readonly string ModName = nameof(ModAchievements);
+        private static readonly string s_ModName = nameof(ModAchievements);
 
         private bool ShowUI = false;
 
@@ -25,6 +25,14 @@ namespace ModAchievements
 
         public bool IsModActiveForMultiplayer { get; private set; }
         public bool IsModActiveForSingleplayer => ReplTools.AmIMaster();
+
+        public static string SelectedAchievementName;
+        public static int SelectedAchievementIndex;
+        public static AchievementData SelectedAchievementData;
+
+        public static List<string> s_AchievementsDebugData;
+        public static Dictionary<string, bool> s_Achievements = new Dictionary<string, bool>();
+        public static List<AchievementData> s_AchievementDataList = new List<AchievementData>();
 
         public static string PermissionChangedMessage(string permission) => $"Permission to use mods and cheats in multiplayer was {permission}";
 
@@ -51,14 +59,15 @@ namespace ModAchievements
         private void InitWindow()
         {
             int wid = GetHashCode();
-            ModModAchievementsScreen = GUILayout.Window(wid, ModModAchievementsScreen, InitModAchievementsScreen, $"{ModName}", GUI.skin.window);
+            ModModAchievementsScreen = GUILayout.Window(wid, ModModAchievementsScreen, InitModAchievementsScreen, $"{s_ModName}", GUI.skin.window);
         }
 
         private void InitData()
         {
-            hUDManager = HUDManager.Get();
-            player = Player.Get();
-            menuInGameManager = MenuInGameManager.Get();
+            s_HUDManager = HUDManager.Get();
+            s_Player = Player.Get();
+            s_MenuInGameManager = MenuInGameManager.Get();
+            s_AchievementsManager = AchievementsManager.Get();
         }
 
         private void InitSkinUI()
@@ -81,32 +90,55 @@ namespace ModAchievements
         {
             using (var verScope = new GUILayout.VerticalScope(GUI.skin.box))
             {
-                //GUILayout.Label("Achievements", GUI.skin.label);
-
-                //AchievementsScrollView();
-
-                if (GUILayout.Button("Open manager", GUI.skin.button))
+                if (GUILayout.Button("Load achievements", GUI.skin.button))
                 {
-                    OnClickOpenManagerButton();
-                    //CloseWindow();
+                    OnClickLoadAchievementsButton();
+                    AchievementsScrollView();
                 }
             }
         }
 
-        private void OnClickOpenManagerButton()
+        private void OnClickLoadAchievementsButton()
         {
             try
             {
-                var manager = (MenuDebugAchievements) menuInGameManager.GetMenu(typeof(MenuDebugAchievements));
-                if (manager != null)
+                if (s_AchievementsManager != null)
                 {
-                    manager.Show();
+                    s_AchievementsDebugData = s_AchievementsManager.GetAchievementsDebugData();
+                    if (s_AchievementsDebugData != null && s_AchievementsDebugData.Count > 0)
+                    {
+                        LoadAchievementsData();
+                    }
                 }
-
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{ModName}:{nameof(OnClickOpenManagerButton)}] throws exception:\n{exc.Message}");
+                ModAPI.Log.Write($"[{s_ModName}:{nameof(OnClickLoadAchievementsButton)}] throws exception:\n{exc.Message}");
+            }
+        }
+
+        private static void LoadAchievementsData()
+        {
+            s_Achievements.Clear();
+            s_AchievementDataList.Clear();
+            foreach (string s_AchievementDebugData in s_AchievementsDebugData)
+            {
+                bool m_IsAchieved = s_AchievementDebugData.Contains("green") ? true : false;
+                string m_ApiName = s_AchievementDebugData.Split('>')[1].Split('<')[0];
+                s_Achievements.Add(m_ApiName, m_IsAchieved);
+
+                AchievementData achievementData = new AchievementData(m_ApiName);
+                achievementData.SetAchived(m_IsAchieved);
+                s_AchievementDataList.Add(achievementData);
+            }
+        }
+
+        private static void ShowMenuDebugAchievements()
+        {
+            var menuDebugAchievements = (MenuDebugAchievements)s_MenuInGameManager.GetMenu(typeof(MenuDebugAchievements));
+            if (menuDebugAchievements != null)
+            {
+                menuDebugAchievements.Show();
             }
         }
 
@@ -114,9 +146,47 @@ namespace ModAchievements
         {
             ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUI.skin.scrollView, GUILayout.MinHeight(300f));
 
-            //SelectedItemIndex = GUILayout.SelectionGrid(SelectedItemIndex, GetItems(), 3, GUI.skin.button);
+            SelectedAchievementIndex = GUILayout.SelectionGrid(SelectedAchievementIndex, GetAchievementNames(), 2, GUI.skin.button);
 
             GUILayout.EndScrollView();
+
+            if (GUILayout.Button("Unlock achievement", GUI.skin.button))
+            {
+                OnClickUnlockAchievementButton();
+                CloseWindow();
+            }
+        }
+
+        private void OnClickUnlockAchievementButton()
+        {
+            try
+            {
+                string[] achievementNames = GetAchievementNames();
+                SelectedAchievementName = achievementNames[SelectedAchievementIndex];
+                SelectedAchievementData = s_AchievementDataList.Find(achievement => achievement.GetApiName() == SelectedAchievementName);
+                if (SelectedAchievementData != null)
+                {
+                    s_AchievementsManager.UnlockAchievement(SelectedAchievementData.GetApiName());
+                }
+            }
+            catch (Exception exc)
+            {
+                ModAPI.Log.Write($"[{s_ModName}:{nameof(OnClickUnlockAchievementButton)}] throws exception:\n{exc.Message}");
+            }
+        }
+
+        private string[] GetAchievementNames()
+        {
+            try
+            {
+                string[] list = s_Achievements.Keys.ToArray();
+                return list;
+            }
+            catch (Exception exc)
+            {
+                ModAPI.Log.Write($"[{s_ModName}:{nameof(GetAchievementNames)}] throws exception:\n{exc.Message}");
+            }
+            throw new NotImplementedException();
         }
 
         private void ScreenMenuBox()
@@ -161,10 +231,10 @@ namespace ModAchievements
 
         public void ShowHUDBigInfo(string text)
         {
-            string header = $"{ModName} Info";
+            string header = $"{s_ModName} Info";
             string textureName = HUDInfoLogTextureType.Count.ToString();
 
-            HUDBigInfo bigInfo = (HUDBigInfo)hUDManager.GetHUD(typeof(HUDBigInfo));
+            HUDBigInfo bigInfo = (HUDBigInfo)s_HUDManager.GetHUD(typeof(HUDBigInfo));
             HUDBigInfoData.s_Duration = 5f;
             HUDBigInfoData bigInfoData = new HUDBigInfoData
             {
@@ -180,7 +250,7 @@ namespace ModAchievements
         public void ShowHUDInfoLog(string itemID, string localizedTextKey)
         {
             var localization = GreenHellGame.Instance.GetLocalization();
-            HUDMessages hUDMessages = (HUDMessages)hUDManager.GetHUD(typeof(HUDMessages));
+            HUDMessages hUDMessages = (HUDMessages)s_HUDManager.GetHUD(typeof(HUDMessages));
             hUDMessages.AddMessage(
                 $"{localization.Get(localizedTextKey)}  {localization.Get(itemID)}"
                 );
@@ -192,15 +262,15 @@ namespace ModAchievements
 
             if (blockPlayer)
             {
-                player.BlockMoves();
-                player.BlockRotation();
-                player.BlockInspection();
+                s_Player.BlockMoves();
+                s_Player.BlockRotation();
+                s_Player.BlockInspection();
             }
             else
             {
-                player.UnblockMoves();
-                player.UnblockRotation();
-                player.UnblockInspection();
+                s_Player.UnblockMoves();
+                s_Player.UnblockRotation();
+                s_Player.UnblockInspection();
             }
         }
 

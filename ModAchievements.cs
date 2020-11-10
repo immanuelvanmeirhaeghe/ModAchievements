@@ -14,6 +14,8 @@ namespace ModAchievements
         private static MenuInGameManager s_MenuInGameManager;
         private static AchievementsManager s_AchievementsManager;
         private static Player s_Player;
+        private static bool s_AchievementDataLoaded = false;
+        private static MenuDebugAchievements s_MenuDebugAchievements;
 
         private static readonly string s_ModName = nameof(ModAchievements);
 
@@ -21,6 +23,9 @@ namespace ModAchievements
 
         public bool IsModActiveForMultiplayer { get; private set; }
         public bool IsModActiveForSingleplayer => ReplTools.AmIMaster();
+
+        public static bool IsDebugShown { get; private set; }
+        public string UnLockedAchievementsInfo { get; private set; }
 
         public static Rect ModModAchievementsScreen = new Rect(Screen.width / 40f, Screen.height / 40f, 750f, 250f);
         public static Vector2 ScrollPosition;
@@ -31,7 +36,7 @@ namespace ModAchievements
         public static List<string> s_AchievementsDebugData;
         public static Dictionary<string, bool> s_Achievements = new Dictionary<string, bool>();
         public static List<AchievementData> s_AchievementDataList = new List<AchievementData>();
-        private static bool s_Loaded = false;
+
 
         public static string PermissionChangedMessage(string permission) => $"Permission to use mods and cheats in multiplayer was {permission}";
 
@@ -112,8 +117,10 @@ namespace ModAchievements
                     OnClickLoadAchievementsButton();
                 }
 
-                if (s_Loaded)
+                if (s_AchievementDataLoaded)
                 {
+                    UnLockedAchievementsScrollView();
+
                     LockedAchievementsScrollView();
                 }
             }
@@ -144,6 +151,7 @@ namespace ModAchievements
             {
                 s_Achievements.Clear();
                 s_AchievementDataList.Clear();
+
                 foreach (string s_AchievementDebugData in s_AchievementsDebugData)
                 {
                     bool m_IsAchieved = s_AchievementDebugData.Contains("green") ? true : false;
@@ -155,31 +163,52 @@ namespace ModAchievements
                     s_AchievementDataList.Add(achievementData);
                 }
 
-                s_Loaded = true;
+                _ = GetUnLockedAchievementNames();
+
+                s_AchievementDataLoaded = true;
                 ShowHUDBigInfo($"Data loaded!");
             }
             catch (Exception exc)
             {
                 ModAPI.Log.Write($"[{s_ModName}:{nameof(LoadAchievementsData)}] throws exception:\n{exc.Message}");
-                s_Loaded = false;
+                s_AchievementDataLoaded = false;
             }
         }
 
-        private static void ShowMenuDebugAchievements()
+        private static void ToggleMenuDebugAchievements()
         {
-            var menuDebugAchievements = (MenuDebugAchievements)s_MenuInGameManager.GetMenu(typeof(MenuDebugAchievements));
-            if (menuDebugAchievements != null)
+            if (IsDebugShown && s_MenuDebugAchievements != null)
             {
-                menuDebugAchievements.Show();
+                s_MenuDebugAchievements.Hide();
+                IsDebugShown = false;
+            }
+            else
+            {
+                s_MenuDebugAchievements = (MenuDebugAchievements)s_MenuInGameManager.GetMenu(typeof(MenuDebugAchievements));
+                if (s_MenuDebugAchievements != null)
+                {
+                    s_MenuDebugAchievements.Show();
+                    IsDebugShown = true;
+                }
+            }
+        }
+
+        private void UnLockedAchievementsScrollView()
+        {
+            ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
+            UnLockedAchievementsInfo = GUILayout.TextArea(UnLockedAchievementsInfo, GUI.skin.textArea);
+            GUILayout.EndScrollView();
+
+            if (GUILayout.Button("Toggle debug menu", GUI.skin.button))
+            {
+                ToggleMenuDebugAchievements();
             }
         }
 
         private void LockedAchievementsScrollView()
         {
             ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
-
             SelectedAchievementIndex = GUILayout.SelectionGrid(SelectedAchievementIndex, GetLockedAchievementNames(), 3, GUI.skin.button);
-
             GUILayout.EndScrollView();
 
             if (GUILayout.Button("Unlock achievement", GUI.skin.button))
@@ -198,7 +227,8 @@ namespace ModAchievements
                 SelectedAchievementData = s_AchievementDataList.Find(achievement => achievement.GetApiName() == SelectedAchievementName);
                 if (SelectedAchievementData != null)
                 {
-                    s_AchievementsManager.UnlockAchievement(SelectedAchievementData.GetApiName());
+                    //s_AchievementsManager.UnlockAchievement(SelectedAchievementData.GetApiName());
+                    ShowHUDBigInfo($"Achievement {SelectedAchievementData.GetApiName()} unlocked!");
                 }
             }
             catch (Exception exc)
@@ -219,6 +249,30 @@ namespace ModAchievements
                     foreach (var lockedAchievement in lockedAchievements)
                     {
                         list.Add(lockedAchievement.Key);
+                    }
+                }
+                return list.ToArray();
+            }
+            catch (Exception exc)
+            {
+                ModAPI.Log.Write($"[{s_ModName}:{nameof(GetLockedAchievementNames)}] throws exception:\n{exc.Message}");
+                return list.ToArray();
+            }
+        }
+
+        private string[] GetUnLockedAchievementNames()
+        {
+            List<string> list = new List<string>();
+            try
+            {
+                if (s_Achievements != null)
+                {
+                    var unlockedAchievements = s_Achievements.Where(ach => ach.Value == true).ToArray();
+
+                    foreach (var unlockedAchievement in unlockedAchievements)
+                    {
+                        UnLockedAchievementsInfo += unlockedAchievement.Key;
+                        list.Add(unlockedAchievement.Key);
                     }
                 }
                 return list.ToArray();

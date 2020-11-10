@@ -19,13 +19,11 @@ namespace ModAchievements
 
         private bool ShowUI = false;
 
-        public static Rect ModModAchievementsScreen = new Rect(Screen.width / 40f, Screen.height / 40f, 750f, 250f);
-
-        public static Vector2 ScrollPosition;
-
         public bool IsModActiveForMultiplayer { get; private set; }
         public bool IsModActiveForSingleplayer => ReplTools.AmIMaster();
 
+        public static Rect ModModAchievementsScreen = new Rect(Screen.width / 40f, Screen.height / 40f, 750f, 250f);
+        public static Vector2 ScrollPosition;
         public static string SelectedAchievementName;
         public static int SelectedAchievementIndex;
         public static AchievementData SelectedAchievementData;
@@ -33,6 +31,7 @@ namespace ModAchievements
         public static List<string> s_AchievementsDebugData;
         public static Dictionary<string, bool> s_Achievements = new Dictionary<string, bool>();
         public static List<AchievementData> s_AchievementDataList = new List<AchievementData>();
+        private static bool s_Loaded = false;
 
         public static string PermissionChangedMessage(string permission) => $"Permission to use mods and cheats in multiplayer was {permission}";
 
@@ -40,6 +39,24 @@ namespace ModAchievements
 
         public static string OnlyForSinglePlayerOrHostMessage(string message)
            => $"\n<color=#{ColorUtility.ToHtmlStringRGBA(Color.yellow)}>{message}</color> is only available for single player or when host.\nHost can activate using <b>ModManager</b>.";
+
+        public void ShowHUDBigInfo(string text)
+        {
+            string header = $"{s_ModName} Info";
+            string textureName = HUDInfoLogTextureType.Count.ToString();
+
+            HUDBigInfo bigInfo = (HUDBigInfo)s_HUDManager.GetHUD(typeof(HUDBigInfo));
+            HUDBigInfoData.s_Duration = 4f;
+            HUDBigInfoData bigInfoData = new HUDBigInfoData
+            {
+                m_Header = header,
+                m_Text = text,
+                m_TextureName = textureName,
+                m_ShowTime = Time.time
+            };
+            bigInfo.AddInfo(bigInfoData);
+            bigInfo.Show(true);
+        }
 
         private void ToggleShowUI()
         {
@@ -93,7 +110,11 @@ namespace ModAchievements
                 if (GUILayout.Button("Load achievements", GUI.skin.button))
                 {
                     OnClickLoadAchievementsButton();
-                    AchievementsScrollView();
+                }
+
+                if (s_Loaded)
+                {
+                    LockedAchievementsScrollView();
                 }
             }
         }
@@ -117,19 +138,30 @@ namespace ModAchievements
             }
         }
 
-        private static void LoadAchievementsData()
+        private void LoadAchievementsData()
         {
-            s_Achievements.Clear();
-            s_AchievementDataList.Clear();
-            foreach (string s_AchievementDebugData in s_AchievementsDebugData)
+            try
             {
-                bool m_IsAchieved = s_AchievementDebugData.Contains("green") ? true : false;
-                string m_ApiName = s_AchievementDebugData.Split('>')[1].Split('<')[0];
-                s_Achievements.Add(m_ApiName, m_IsAchieved);
+                s_Achievements.Clear();
+                s_AchievementDataList.Clear();
+                foreach (string s_AchievementDebugData in s_AchievementsDebugData)
+                {
+                    bool m_IsAchieved = s_AchievementDebugData.Contains("green") ? true : false;
+                    string m_ApiName = s_AchievementDebugData.Split('>')[1].Split('<')[0];
+                    s_Achievements.Add(m_ApiName, m_IsAchieved);
 
-                AchievementData achievementData = new AchievementData(m_ApiName);
-                achievementData.SetAchived(m_IsAchieved);
-                s_AchievementDataList.Add(achievementData);
+                    AchievementData achievementData = new AchievementData(m_ApiName);
+                    achievementData.SetAchived(m_IsAchieved);
+                    s_AchievementDataList.Add(achievementData);
+                }
+
+                s_Loaded = true;
+                ShowHUDBigInfo($"Data loaded!");
+            }
+            catch (Exception exc)
+            {
+                ModAPI.Log.Write($"[{s_ModName}:{nameof(LoadAchievementsData)}] throws exception:\n{exc.Message}");
+                s_Loaded = false;
             }
         }
 
@@ -142,11 +174,11 @@ namespace ModAchievements
             }
         }
 
-        private void AchievementsScrollView()
+        private void LockedAchievementsScrollView()
         {
-            ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUI.skin.scrollView, GUILayout.MinHeight(300f));
+            ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
 
-            SelectedAchievementIndex = GUILayout.SelectionGrid(SelectedAchievementIndex, GetAchievementNames(), 2, GUI.skin.button);
+            SelectedAchievementIndex = GUILayout.SelectionGrid(SelectedAchievementIndex, GetLockedAchievementNames(), 3, GUI.skin.button);
 
             GUILayout.EndScrollView();
 
@@ -161,7 +193,7 @@ namespace ModAchievements
         {
             try
             {
-                string[] achievementNames = GetAchievementNames();
+                string[] achievementNames = GetLockedAchievementNames();
                 SelectedAchievementName = achievementNames[SelectedAchievementIndex];
                 SelectedAchievementData = s_AchievementDataList.Find(achievement => achievement.GetApiName() == SelectedAchievementName);
                 if (SelectedAchievementData != null)
@@ -175,18 +207,27 @@ namespace ModAchievements
             }
         }
 
-        private string[] GetAchievementNames()
+        private string[] GetLockedAchievementNames()
         {
+            List<string> list = new List<string>();
             try
             {
-                string[] list = s_Achievements.Keys.ToArray();
-                return list;
+                if (s_Achievements != null)
+                {
+                    var lockedAchievements = s_Achievements.Where(ach => ach.Value == false).ToArray();
+
+                    foreach (var lockedAchievement in lockedAchievements)
+                    {
+                        list.Add(lockedAchievement.Key);
+                    }
+                }
+                return list.ToArray();
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{s_ModName}:{nameof(GetAchievementNames)}] throws exception:\n{exc.Message}");
+                ModAPI.Log.Write($"[{s_ModName}:{nameof(GetLockedAchievementNames)}] throws exception:\n{exc.Message}");
+                return list.ToArray();
             }
-            throw new NotImplementedException();
         }
 
         private void ScreenMenuBox()
@@ -227,24 +268,6 @@ namespace ModAchievements
         public static ModAchievements Get()
         {
             return s_Instance;
-        }
-
-        public void ShowHUDBigInfo(string text)
-        {
-            string header = $"{s_ModName} Info";
-            string textureName = HUDInfoLogTextureType.Count.ToString();
-
-            HUDBigInfo bigInfo = (HUDBigInfo)s_HUDManager.GetHUD(typeof(HUDBigInfo));
-            HUDBigInfoData.s_Duration = 5f;
-            HUDBigInfoData bigInfoData = new HUDBigInfoData
-            {
-                m_Header = header,
-                m_Text = text,
-                m_TextureName = textureName,
-                m_ShowTime = Time.time
-            };
-            bigInfo.AddInfo(bigInfoData);
-            bigInfo.Show(true);
         }
 
         public void ShowHUDInfoLog(string itemID, string localizedTextKey)

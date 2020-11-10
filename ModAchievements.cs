@@ -230,7 +230,7 @@ namespace ModAchievements
                 SelectedAchievementData = s_AchievementDataList.Find(achievement => achievement.GetApiName() == SelectedAchievementName);
                 if (SelectedAchievementData != null)
                 {
-                    //s_AchievementsManager.UnlockAchievement(SelectedAchievementData.GetApiName());
+                    s_AchievementsManager.UnlockAchievement(SelectedAchievementData.GetApiName());
                     ShowHUDBigInfo($"Achievement {SelectedAchievementName} unlocked!");
                 }
             }

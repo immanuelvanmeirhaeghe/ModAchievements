@@ -149,6 +149,7 @@ namespace ModAchievements
         {
             try
             {
+                UnLockedAchievementsInfo = string.Empty;
                 s_Achievements.Clear();
                 s_AchievementDataList.Clear();
 
@@ -228,7 +229,7 @@ namespace ModAchievements
                 if (SelectedAchievementData != null)
                 {
                     //s_AchievementsManager.UnlockAchievement(SelectedAchievementData.GetApiName());
-                    ShowHUDBigInfo($"Achievement {SelectedAchievementData.GetApiName()} unlocked!");
+                    ShowHUDBigInfo($"Achievement {SelectedAchievementName} unlocked!");
                 }
             }
             catch (Exception exc)
@@ -271,7 +272,7 @@ namespace ModAchievements
 
                     foreach (var unlockedAchievement in unlockedAchievements)
                     {
-                        UnLockedAchievementsInfo += unlockedAchievement.Key;
+                        UnLockedAchievementsInfo += $"<color=green>{unlockedAchievement.Key}</color>\n";
                         list.Add(unlockedAchievement.Key);
                     }
                 }

@@ -11,6 +11,8 @@ namespace ModAchievements
     {
         private static ModAchievements s_Instance;
         private static HUDManager hUDManager;
+        private static MenuInGameManager menuInGameManager;
+
         private static Player player;
 
         private static readonly string ModName = nameof(ModAchievements);
@@ -49,13 +51,14 @@ namespace ModAchievements
         private void InitWindow()
         {
             int wid = GetHashCode();
-            ModModAchievementsScreen = GUILayout.Window(wid, ModModAchievementsScreen, InitModCraftingScreen, $"{ModName}", GUI.skin.window);
+            ModModAchievementsScreen = GUILayout.Window(wid, ModModAchievementsScreen, InitModAchievementsScreen, $"{ModName}", GUI.skin.window);
         }
 
         private void InitData()
         {
             hUDManager = HUDManager.Get();
             player = Player.Get();
+            menuInGameManager = MenuInGameManager.Get();
         }
 
         private void InitSkinUI()
@@ -63,34 +66,51 @@ namespace ModAchievements
             GUI.skin = ModAPI.Interface.Skin;
         }
 
-        private void InitModCraftingScreen(int windowID)
+        private void InitModAchievementsScreen(int windowID)
         {
             using (var verticalScope = new GUILayout.VerticalScope(GUI.skin.box))
             {
                 ScreenMenuBox();
 
-                CraftItemBox();
+                AchievementsBox();
             }
             GUI.DragWindow(new Rect(0f, 0f, 10000f, 10000f));
         }
 
-        private void CraftItemBox()
+        private void AchievementsBox()
         {
             using (var verScope = new GUILayout.VerticalScope(GUI.skin.box))
             {
-                GUILayout.Label("Select item from list then click Try craft", GUI.skin.label, GUILayout.MaxWidth(200f));
+                //GUILayout.Label("Achievements", GUI.skin.label);
 
-                ScrollingitemsView();
+                //AchievementsScrollView();
 
-                if (GUILayout.Button("Try craft", GUI.skin.button))
+                if (GUILayout.Button("Open manager", GUI.skin.button))
                 {
-                    //OnClickTryCraftButton();
-                    CloseWindow();
+                    OnClickOpenManagerButton();
+                    //CloseWindow();
                 }
             }
         }
 
-        private void ScrollingitemsView()
+        private void OnClickOpenManagerButton()
+        {
+            try
+            {
+                var manager = (MenuDebugAchievements) menuInGameManager.GetMenu(typeof(MenuDebugAchievements));
+                if (manager != null)
+                {
+                    manager.Show();
+                }
+
+            }
+            catch (Exception exc)
+            {
+                ModAPI.Log.Write($"[{ModName}:{nameof(OnClickOpenManagerButton)}] throws exception:\n{exc.Message}");
+            }
+        }
+
+        private void AchievementsScrollView()
         {
             ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUI.skin.scrollView, GUILayout.MinHeight(300f));
 

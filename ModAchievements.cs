@@ -28,7 +28,8 @@ namespace ModAchievements
         public string UnLockedAchievementsInfo { get; private set; }
 
         public static Rect ModModAchievementsScreen = new Rect(Screen.width / 40f, Screen.height / 40f, 750f, 250f);
-        public static Vector2 ScrollPosition;
+        public static Vector2 UnlockedScrollPosition;
+        public static Vector2 LockedScrollPosition;
         public static string SelectedAchievementName;
         public static int SelectedAchievementIndex;
         public static AchievementData SelectedAchievementData;
@@ -36,7 +37,6 @@ namespace ModAchievements
         public static List<string> s_AchievementsDebugData;
         public static Dictionary<string, bool> s_Achievements = new Dictionary<string, bool>();
         public static List<AchievementData> s_AchievementDataList = new List<AchievementData>();
-
 
         public static string PermissionChangedMessage(string permission) => $"Permission to use mods and cheats in multiplayer was {permission}";
 
@@ -196,8 +196,9 @@ namespace ModAchievements
 
         private void UnLockedAchievementsScrollView()
         {
-            ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
-            UnLockedAchievementsInfo = GUILayout.TextArea(UnLockedAchievementsInfo, GUI.skin.textArea);
+            UnlockedScrollPosition = GUILayout.BeginScrollView(UnlockedScrollPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
+            GUI.contentColor = Color.green;
+            GUILayout.Label(UnLockedAchievementsInfo, GUI.skin.label);
             GUILayout.EndScrollView();
 
             if (GUILayout.Button("Toggle debug menu", GUI.skin.button))
@@ -208,7 +209,8 @@ namespace ModAchievements
 
         private void LockedAchievementsScrollView()
         {
-            ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
+           LockedScrollPosition = GUILayout.BeginScrollView(LockedScrollPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
+            GUI.contentColor = Color.red;
             SelectedAchievementIndex = GUILayout.SelectionGrid(SelectedAchievementIndex, GetLockedAchievementNames(), 3, GUI.skin.button);
             GUILayout.EndScrollView();
 

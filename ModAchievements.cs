@@ -16,7 +16,7 @@ namespace ModAchievements
         private static Player s_Player;
         private static bool s_AchievementDataLoaded = false;
         private static MenuDebugAchievements s_MenuDebugAchievements;
-
+        private static StringBuilder DebugLogger = new StringBuilder($"");
         private static readonly string s_ModName = nameof(ModAchievements);
 
         private bool ShowUI = false;
@@ -34,7 +34,7 @@ namespace ModAchievements
         public static int SelectedAchievementIndex;
         public static AchievementData SelectedAchievementData;
 
-        public static List<string> s_AchievementsDebugData;
+        public static List<string> s_AchievementsDebugData = new List<string>();
         public static Dictionary<string, bool> s_Achievements = new Dictionary<string, bool>();
         public static List<AchievementData> s_AchievementDataList = new List<AchievementData>();
 
@@ -42,8 +42,8 @@ namespace ModAchievements
 
         private static string HUDBigInfoMessage(string message) => $"<color=#{ColorUtility.ToHtmlStringRGBA(Color.cyan)}>System</color>\n{message}";
 
-        public static string OnlyForSinglePlayerOrHostMessage(string message)
-           => $"\n<color=#{ColorUtility.ToHtmlStringRGBA(Color.yellow)}>{message}</color> is only available for single player or when host.\nHost can activate using <b>ModManager</b>.";
+        public static string OnlyForSinglePlayerOrHostMessage()
+           => $"Only available for single player or when host.\nHost can activate using ModManager.";
 
         public void ShowHUDBigInfo(string text)
         {
@@ -225,8 +225,9 @@ namespace ModAchievements
 
                 if (debug)
                 {
-                    ModAPI.Log.Write($"\nAchievements data");
-                    ModAPI.Log.Write($"\nApiName\tisAchieved");
+                    DebugLogger.Clear();
+                    DebugLogger.AppendLine($"\nAchievements");
+                    DebugLogger.AppendLine($"\nApiName\tisAchieved");
                 }
 
                 foreach (string s_AchievementDebugData in s_AchievementsDebugData)
@@ -241,14 +242,18 @@ namespace ModAchievements
 
                     if (debug)
                     {
-                        ModAPI.Log.Write($"\n{m_ApiName}\t{m_IsAchieved}");
+                        DebugLogger.AppendLine($"\n{m_ApiName}\t{m_IsAchieved}");
                     }
                 }
-
                 _ = GetUnlockedAchievementNames();
 
+                if (debug)
+                {
+                    ModAPI.Log.Write(DebugLogger.ToString());
+                }
+
                 s_AchievementDataLoaded = true;
-                ShowHUDBigInfo($"Data loaded!");
+                ShowHUDBigInfo(HUDBigInfoMessage($"Data loaded!"));
             }
             catch (Exception exc)
             {
@@ -291,7 +296,7 @@ namespace ModAchievements
             }
             else
             {
-                GUILayout.Label($"Only available in debug mode. Host can activate using ModManager or DebugMode.");
+                GUILayout.Label(OnlyForSinglePlayerOrHostMessage(), GUI.skin.label);
             }
         }
 

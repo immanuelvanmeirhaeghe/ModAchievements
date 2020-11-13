@@ -267,7 +267,8 @@ namespace ModAchievements
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{LocalModName}:{nameof(LoadAchievementsData)}({nameof(logDebugInfo)} = {logDebugInfo}] throws exception:\n{exc.Message}");
+                DebugLogger.AppendLine($"[{LocalModName}:{nameof(LoadAchievementsData)}({nameof(logDebugInfo)} = {logDebugInfo}] throws exception:\n{exc.Message}");
+                ModAPI.Log.Write(DebugLogger.ToString());
                 AchievementDataLoaded = false;
             }
         }

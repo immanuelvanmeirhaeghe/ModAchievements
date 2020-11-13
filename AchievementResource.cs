@@ -149,7 +149,7 @@ namespace ModAchievements
 
         public static IEnumerator GetIconTexture(string uriString)
         {
-            using (UnityWebRequest webRequest = UnityWebRequest.Get(uriString))
+            using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(uriString))
             {
                 yield return webRequest.SendWebRequest();
                 if (webRequest.isNetworkError)
@@ -158,8 +158,7 @@ namespace ModAchievements
                 }
                 else
                 {
-                    var handler = (DownloadHandlerTexture)webRequest.downloadHandler;
-                    IconTexture = handler.texture;
+                    IconTexture = DownloadHandlerTexture.GetContent(webRequest);
                 }
             }
         }

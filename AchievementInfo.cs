@@ -27,14 +27,21 @@ namespace ModAchievements
 
         public AchievementInfo(string apiName = "ACH_UNKNOWN", AchievementData achievementData = default)
         {
-            AchievementID = EnumUtils<AchievementID>.GetValue(apiName.ToUpper());
-            AchievementData = achievementData;
-            AchievementEvent = GetAchievementEvent(AchievementID);
-            AchievementIconFileUri = GetIconFileUri(AchievementID);
-            AchievementIconTexture = GetIconTexture(AchievementID);
-            AchievementIconFileName = GetIconFileName(AchievementID);
-            AchievementTitle = GetTitle(AchievementID);
-            AchievementDescription = GetDescription(AchievementID);
+            try
+            {
+                AchievementID = EnumUtils<AchievementID>.GetValue(apiName.ToUpper());
+                AchievementData = achievementData;
+                AchievementEvent = GetAchievementEvent(AchievementID);
+                AchievementIconFileUri = GetIconFileUri(AchievementID);
+                AchievementIconTexture = GetIconTexture(AchievementID);
+                AchievementIconFileName = GetIconFileName(AchievementID);
+                AchievementTitle = GetTitle(AchievementID);
+                AchievementDescription = GetDescription(AchievementID);
+            }
+            catch (Exception exc)
+            {
+                ModAPI.Log.Write($"[{nameof(AchievementInfo)}:{nameof(AchievementInfo)}({nameof(apiName)} = {apiName}, {nameof(achievementData)} = {achievementData}] throws exception:\n{exc.Message}");
+            }
         }
 
         private string GetIconFileName(AchievementID achievementID)
@@ -213,10 +220,12 @@ namespace ModAchievements
 
         private Texture2D GetIconTexture(AchievementID achievementID)
         {
+            Texture2D iconTexture;
             string iconFileUriString = AchievementResource.GetIconFileUriString(achievementID);
             IEnumerator getIconTexture = AchievementResource.GetIconTexture(iconFileUriString);
             StartCoroutine(getIconTexture);
-            return AchievementResource.IconTexture;
+            iconTexture= AchievementResource.IconTexture;
+            return iconTexture;
         }
 
         private string GetTitle(AchievementID achievementID)

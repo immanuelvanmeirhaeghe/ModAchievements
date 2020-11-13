@@ -1,12 +1,13 @@
 ﻿using Enums;
 using ModAchievements.Enums;
 using System;
+using System.Collections;
 using UnityEngine;
 using Event = Enums.Event;
 
 namespace ModAchievements
 {
-    public class AchievementInfo
+    public class AchievementInfo : MonoBehaviour
     {
         public AchievementID AchievementID { get; set; }
 
@@ -17,8 +18,6 @@ namespace ModAchievements
         public Uri AchievementIconFileUri { get; set; }
 
         public string AchievementIconFileName { get; set; }
-
-        public static readonly string SteamAchievementsUri = $@"https://steamcommunity.com/stats/815370/achievements/";
 
         public Texture2D AchievementIconTexture { get; set; }
 
@@ -40,8 +39,8 @@ namespace ModAchievements
 
         private string GetIconFileName(AchievementID achievementID)
         {
-            string uriString = AchievementResource.GetIconFileUri(achievementID);
-            string iconFileName = uriString.Replace(AchievementResource.ImageBaseUri, string.Empty);
+            string uriString = AchievementResource.GetIconFileUriString(achievementID);
+            string iconFileName = uriString.Replace(AchievementResource.SteamAchievementIconBaseUri, string.Empty);
             return iconFileName;
         }
 
@@ -207,17 +206,17 @@ namespace ModAchievements
 
         private Uri GetIconFileUri(AchievementID achievementID)
         {
-            string uriString = AchievementResource.GetIconFileUri(achievementID);
+            string uriString = AchievementResource.GetIconFileUriString(achievementID);
             Uri uri = new Uri(uriString);
             return uri;
         }
 
         private Texture2D GetIconTexture(AchievementID achievementID)
         {
-            string iconFileUri = AchievementResource.GetIconFileUri(achievementID);
-            string iconFileName = iconFileUri.Replace(AchievementResource.ImageBaseUri, string.Empty);
-            Texture2D tex = AchievementResource.GetIconImage(iconFileName);
-            return tex;
+            string iconFileUriString = AchievementResource.GetIconFileUriString(achievementID);
+            IEnumerator getIconTexture = AchievementResource.GetIconTexture(iconFileUriString);
+            StartCoroutine(getIconTexture);
+            return AchievementResource.IconTexture;
         }
 
         private string GetTitle(AchievementID achievementID)

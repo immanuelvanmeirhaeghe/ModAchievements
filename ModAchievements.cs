@@ -1,59 +1,53 @@
-﻿using ModAchievements.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace ModAchievements
 {
     public class ModAchievements : MonoBehaviour
     {
-        private static ModAchievements s_Instance;
-        private static HUDManager s_HUDManager;
-        private static MenuInGameManager s_MenuInGameManager;
-        private static AchievementsManager s_AchievementsManager;
-        private static Player s_Player;
-        private static bool s_AchievementDataLoaded = false;
-        private static MenuDebugAchievements s_MenuDebugAchievements;
-        private static StringBuilder DebugLogger = new StringBuilder($"Achievements debug info");
-        private static readonly string s_ModName = nameof(ModAchievements);
+        private static ModAchievements Instance;
+        private static HUDManager LocalHUDManager;
+        private static MenuInGameManager LocalMenuInGameManager;
+        private static AchievementsManager LocalAchievementsManager;
+        private static Player LocalPlayer;
+        private static bool AchievementDataLoaded = false;
+        private static MenuDebugAchievements LocalMenuDebugAchievements;
+        private static readonly StringBuilder DebugLogger = new StringBuilder($"Achievements debug info");
+        private static readonly string LocalModName = nameof(ModAchievements);
         private static Color DefaultColor;
 
-        private bool ShowUI = false;
+        public static bool LogLocalDebugInfoOption { get; private set; }
+        public static bool IsLocalMenuDebugAchievementsShown { get; private set; }
+        public static Rect ModModAchievementsScreen = new Rect(Screen.width / 40f, Screen.height / 40f, 750f, 450f);
+        public static Vector2 UnlockedAchievementsScrollViewPosition;
+        public static Vector2 LockedAchievementsScrollViewPosition;
+
+        public static AchievementData SelectedAchievementData;
+        public static List<string> LocalAchievementsDebugData = new List<string>();
+        public static List<AchievementData> LocalAchievementDataList = new List<AchievementData>();
+        public static List<AchievementInfo> LocalAchievementsInfoList = new List<AchievementInfo>();
+
+        public static string HUDBigInfoMessage(string message)
+            => $"<color=#{ColorUtility.ToHtmlStringRGBA(Color.cyan)}>System</color>\n{message}";
+        public static string OnlyInDebugModeMessage()
+           => $"Only available in debug mode.\nHost can activate using ModManager. or DebugMode";
+        public static string PermissionChangedMessage(string message)
+            => $"Permission to use mods and cheats in multiplayer was {message}";
+
+        private bool ShowModUI = false;
 
         public bool IsModActiveForMultiplayer { get; private set; }
         public bool IsModActiveForSingleplayer => ReplTools.AmIMaster();
 
-        public static bool IsDebugShown { get; private set; }
-
-        public static Rect ModModAchievementsScreen = new Rect(Screen.width / 40f, Screen.height / 40f, 750f, 450f);
-        public static Vector2 UnlockedAchievementsScrollViewPosition;
-        public static Vector2 LockedAchievementsScrollViewPosition;
-        public static string SelectedAchievementTitle;
-        public static int SelectedAchievementTitleIndex;
-        public static AchievementData SelectedAchievementData;
-
-        public static AchievementsManager GetManager() => s_AchievementsManager;
-        public static List<string> s_AchievementsDebugData = new List<string>();
-        public static Dictionary<string, bool> s_Achievements = new Dictionary<string, bool>();
-        public static List<AchievementData> s_AchievementDataList = new List<AchievementData>();
-        public static List<AchievementInfo> s_AchievementsInfo = new List<AchievementInfo>();
-
-        public static string PermissionChangedMessage(string message) => $"Permission to use mods and cheats in multiplayer was {message}";
-
-        private static string HUDBigInfoMessage(string message) => $"<color=#{ColorUtility.ToHtmlStringRGBA(Color.cyan)}>System</color>\n{message}";
-
-        public static string OnlyForSinglePlayerOrHostMessage()
-           => $"Only available for single player or when host.\nHost can activate using ModManager.";
-
         public void ShowHUDBigInfo(string text)
         {
-            string header = $"{s_ModName} Info";
+            string header = $"{LocalModName} Info";
             string textureName = HUDInfoLogTextureType.Count.ToString();
 
-            HUDBigInfo bigInfo = (HUDBigInfo)s_HUDManager.GetHUD(typeof(HUDBigInfo));
+            HUDBigInfo bigInfo = (HUDBigInfo)LocalHUDManager.GetHUD(typeof(HUDBigInfo));
             HUDBigInfoData.s_Duration = 4f;
             HUDBigInfoData bigInfoData = new HUDBigInfoData
             {
@@ -68,7 +62,7 @@ namespace ModAchievements
 
         private void ToggleShowUI()
         {
-            ShowUI = !ShowUI;
+            ShowModUI = !ShowModUI;
         }
 
         public void Start()
@@ -90,18 +84,18 @@ namespace ModAchievements
         public ModAchievements()
         {
             useGUILayout = true;
-            s_Instance = this;
+            Instance = this;
         }
 
         public static ModAchievements Get()
         {
-            return s_Instance;
+            return Instance;
         }
 
         public void ShowHUDInfoLog(string itemID, string localizedTextKey)
         {
             var localization = GreenHellGame.Instance.GetLocalization();
-            HUDMessages hUDMessages = (HUDMessages)s_HUDManager.GetHUD(typeof(HUDMessages));
+            HUDMessages hUDMessages = (HUDMessages)LocalHUDManager.GetHUD(typeof(HUDMessages));
             hUDMessages.AddMessage(
                 $"{localization.Get(localizedTextKey)}  {localization.Get(itemID)}"
                 );
@@ -113,15 +107,15 @@ namespace ModAchievements
 
             if (blockPlayer)
             {
-                s_Player.BlockMoves();
-                s_Player.BlockRotation();
-                s_Player.BlockInspection();
+                LocalPlayer.BlockMoves();
+                LocalPlayer.BlockRotation();
+                LocalPlayer.BlockInspection();
             }
             else
             {
-                s_Player.UnblockMoves();
-                s_Player.UnblockRotation();
-                s_Player.UnblockInspection();
+                LocalPlayer.UnblockMoves();
+                LocalPlayer.UnblockRotation();
+                LocalPlayer.UnblockInspection();
             }
         }
 
@@ -129,13 +123,13 @@ namespace ModAchievements
         {
             if (Input.GetKeyDown(KeyCode.Home))
             {
-                if (!ShowUI)
+                if (!ShowModUI)
                 {
                     InitData();
                     EnableCursor(true);
                 }
                 ToggleShowUI();
-                if (!ShowUI)
+                if (!ShowModUI)
                 {
                     EnableCursor(false);
                 }
@@ -144,7 +138,7 @@ namespace ModAchievements
 
         private void OnGUI()
         {
-            if (ShowUI)
+            if (ShowModUI)
             {
                 InitData();
                 InitSkinUI();
@@ -155,15 +149,15 @@ namespace ModAchievements
         private void InitWindow()
         {
             int wid = GetHashCode();
-            ModModAchievementsScreen = GUILayout.Window(wid, ModModAchievementsScreen, InitModAchievementsScreen, $"{s_ModName}", GUI.skin.window);
+            ModModAchievementsScreen = GUILayout.Window(wid, ModModAchievementsScreen, InitModAchievementsScreen, $"{LocalModName}", GUI.skin.window);
         }
 
         private void InitData()
         {
-            s_HUDManager = HUDManager.Get();
-            s_Player = Player.Get();
-            s_MenuInGameManager = MenuInGameManager.Get();
-            s_AchievementsManager = AchievementsManager.Get();
+            LocalHUDManager = HUDManager.Get();
+            LocalPlayer = Player.Get();
+            LocalMenuInGameManager = MenuInGameManager.Get();
+            LocalAchievementsManager = AchievementsManager.Get();
         }
 
         private void InitSkinUI()
@@ -186,12 +180,13 @@ namespace ModAchievements
         {
             using (var verScope = new GUILayout.VerticalScope(GUI.skin.box))
             {
+                LogLocalDebugInfoOption = GUILayout.Toggle(LogLocalDebugInfoOption, $"Log debug info?", GUI.skin.toggle);
                 if (GUILayout.Button("Load achievements", GUI.skin.button))
                 {
                     OnClickLoadAchievementsButton();
                 }
 
-                if (s_AchievementDataLoaded)
+                if (AchievementDataLoaded)
                 {
                     UnlockedAchievementsScrollView();
 
@@ -204,95 +199,93 @@ namespace ModAchievements
         {
             try
             {
-                if (s_AchievementsManager != null)
+                if (LocalAchievementsManager != null)
                 {
-                    s_AchievementsDebugData = s_AchievementsManager.GetAchievementsDebugData();
-                    if (s_AchievementsDebugData != null && s_AchievementsDebugData.Count > 0)
+                    LocalAchievementsDebugData = LocalAchievementsManager.GetAchievementsDebugData();
+                    if (LocalAchievementsDebugData != null && LocalAchievementsDebugData.Count > 0)
                     {
-                        LoadAchievementsData(true);
+                        LoadAchievementsData(LogLocalDebugInfoOption);
                     }
                 }
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{s_ModName}:{nameof(OnClickLoadAchievementsButton)}] throws exception:\n{exc.Message}");
+                ModAPI.Log.Write($"[{LocalModName}:{nameof(OnClickLoadAchievementsButton)}] throws exception:\n{exc.Message}");
             }
         }
 
-        private void LoadAchievementsData(bool debug = false)
+        private void LoadAchievementsData(bool logDebugInfo = false)
         {
             try
             {
-                s_Achievements.Clear();
-                s_AchievementDataList.Clear();
-                s_AchievementsInfo.Clear();
+                LocalAchievementDataList.Clear();
+                LocalAchievementsInfoList.Clear();
                 DebugLogger.Clear();
 
-                if (s_AchievementsDebugData == null || s_AchievementsDebugData.Count == 0)
+                if (LocalAchievementsDebugData == null || LocalAchievementsDebugData.Count == 0)
                 {
-                    if (debug)
+                    if (logDebugInfo)
                     {
-                        DebugLogger.AppendLine($"Data not found!");
+                        DebugLogger.AppendLine($"{nameof(LocalAchievementsDebugData)} not found!");
                         ModAPI.Log.Write(DebugLogger.ToString());
                     }
                     return;
                 }
 
-                if (debug)
+                if (logDebugInfo)
                 {
-                    DebugLogger.AppendLine($"AchievementID\t\t\t\tAchievementTitle\t\t\t\t" +
-                                                                         $"AchievementData.IsAchieved()\t\t\t\tAchievementEvent\t\t\t\tAchievementIconFileName");
+                    DebugLogger.AppendLine($"{nameof(AchievementInfo.AchievementID)}\t\t\t\t{nameof(AchievementInfo.AchievementTitle)}\t\t\t\t" +
+                        $"{nameof(AchievementInfo.AchievementData.IsAchieved)}\t\t\t\t{nameof(AchievementInfo.AchievementEvent)}\t\t\t\t{nameof(AchievementInfo.AchievementIconFileName)}");
                 }
 
-                foreach (string s_AchievementDebugData in s_AchievementsDebugData)
+                foreach (string achievementDebugData in LocalAchievementsDebugData)
                 {
-                    bool m_IsAchieved = s_AchievementDebugData.Contains("green") ? true : false;
-                    string m_ApiName = s_AchievementDebugData.Split('>')[1].Split('<')[0];
-                    s_Achievements.Add(m_ApiName, m_IsAchieved);
+                    ///  achievementDebugData should have output formatted as "<color=" + (m_IsAchieved ? "green" : "red") + ">" + m_ApiName + "</color>"
+                    bool isAchieved = achievementDebugData.Contains("green") ? true : false;
+                    string apiName = achievementDebugData.Split('>')[1]?.Split('<')[0];
 
-                    AchievementData achievementData = new AchievementData(m_ApiName);
-                    achievementData.SetAchived(m_IsAchieved);
-                    s_AchievementDataList.Add(achievementData);
+                    AchievementData achievementData = new AchievementData(apiName);
+                    achievementData.SetAchived(isAchieved);
+                    LocalAchievementDataList.Add(achievementData);
 
-                    AchievementInfo achievementInfo = new AchievementInfo(m_ApiName, achievementData);
-                    s_AchievementsInfo.Add(achievementInfo);
+                    AchievementInfo achievementInfo = new AchievementInfo(apiName, achievementData);
+                    LocalAchievementsInfoList.Add(achievementInfo);
 
-                    if (debug)
+                    if (logDebugInfo)
                     {
                         DebugLogger.AppendLine($"{achievementInfo.AchievementID}\t\t\t\t{achievementInfo.AchievementTitle}\t\t\t\t" +
                                                                          $"{achievementInfo.AchievementData.IsAchieved()}\t\t\t\t{achievementInfo.AchievementEvent}\t\t\t\t{achievementInfo.AchievementIconFileName}");
                     }
                 }
 
-                if (debug)
+                if (logDebugInfo)
                 {
                     ModAPI.Log.Write(DebugLogger.ToString());
                 }
 
-                s_AchievementDataLoaded = true;
-                ShowHUDBigInfo(HUDBigInfoMessage($"Data loaded!"));
+                AchievementDataLoaded = true;
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{s_ModName}:{nameof(LoadAchievementsData)}] throws exception:\n{exc.Message}");
-                s_AchievementDataLoaded = false;
+                ModAPI.Log.Write($"[{LocalModName}:{nameof(LoadAchievementsData)}({nameof(logDebugInfo)} = {logDebugInfo}] throws exception:\n{exc.Message}");
+                AchievementDataLoaded = false;
             }
         }
 
         private static void ToggleMenuDebugAchievements()
         {
-            if (IsDebugShown && s_MenuDebugAchievements != null)
+            if (IsLocalMenuDebugAchievementsShown && LocalMenuDebugAchievements != null)
             {
-                s_MenuDebugAchievements.Hide();
-                IsDebugShown = false;
+                LocalMenuDebugAchievements.Hide();
+                IsLocalMenuDebugAchievementsShown = false;
             }
             else
             {
-                s_MenuDebugAchievements = (MenuDebugAchievements)s_MenuInGameManager.GetMenu(typeof(MenuDebugAchievements));
-                if (s_MenuDebugAchievements != null)
+                LocalMenuDebugAchievements = (MenuDebugAchievements)LocalMenuInGameManager.GetMenu(typeof(MenuDebugAchievements));
+                if (LocalMenuDebugAchievements != null)
                 {
-                    s_MenuDebugAchievements.Show();
-                    IsDebugShown = true;
+                    LocalMenuDebugAchievements.Show();
+                    IsLocalMenuDebugAchievementsShown = true;
                 }
             }
         }
@@ -301,18 +294,11 @@ namespace ModAchievements
         {
             UnlockedAchievementsScrollViewPosition = GUILayout.BeginScrollView(UnlockedAchievementsScrollViewPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
 
-            if (s_AchievementsInfo != null && s_AchievementsInfo.Count > 0)
+            if (LocalAchievementsInfoList != null && LocalAchievementsInfoList.Count > 0)
             {
-                foreach (AchievementInfo unlockedAchievementInfo in s_AchievementsInfo.Where(achievementInfo => achievementInfo.AchievementData.IsAchieved()))
-                {
-                    GUI.contentColor = Color.green;
-                    GUIContent content = new GUIContent(unlockedAchievementInfo.AchievementTitle, unlockedAchievementInfo.AchievementIconTexture, unlockedAchievementInfo.AchievementDescription);
-                    using (var horScope = new GUILayout.HorizontalScope(GUI.skin.box))
-                    {
-                        GUILayout.Label(content, GUI.skin.label);
-                    }
-                }
+                AddAchievementInfoLabels(true);
             }
+
             GUILayout.EndScrollView();
 
             GUI.contentColor = DefaultColor;
@@ -325,7 +311,7 @@ namespace ModAchievements
             }
             else
             {
-                GUILayout.Label(OnlyForSinglePlayerOrHostMessage(), GUI.skin.label);
+                GUILayout.Label(OnlyInDebugModeMessage(), GUI.skin.label);
             }
         }
 
@@ -333,66 +319,84 @@ namespace ModAchievements
         {
             LockedAchievementsScrollViewPosition = GUILayout.BeginScrollView(LockedAchievementsScrollViewPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
 
-            if (s_AchievementsInfo != null && s_AchievementsInfo.Count > 0)
+            if (LocalAchievementsInfoList != null && LocalAchievementsInfoList.Count > 0)
             {
-                foreach (AchievementInfo lockedAchievementInfo in s_AchievementsInfo.Where(achievementInfo => !achievementInfo.AchievementData.IsAchieved()))
-                {
-                    GUI.contentColor = Color.red;
-                    GUIContent content = new GUIContent(lockedAchievementInfo.AchievementTitle, lockedAchievementInfo.AchievementIconTexture, lockedAchievementInfo.AchievementDescription);
-                    using (var horScope = new GUILayout.HorizontalScope(GUI.skin.box))
-                    {
-                        GUILayout.Label(content, GUI.skin.label);
-                        GUI.contentColor = DefaultColor;
-                        if (GUILayout.Button("Unlock", GUI.skin.button))
-                        {
-                            OnClickUnlockAchievementButton(lockedAchievementInfo);
-                            CloseWindow();
-                        }
-                    }
-                }
+                AddAchievementInfoLabels(false);
             }
+
             GUILayout.EndScrollView();
         }
 
-        private void OnClickUnlockAchievementButton(AchievementInfo achievementInfo)
+        private void AddAchievementInfoLabels(bool isAchieved)
         {
             try
             {
-                SelectedAchievementData = achievementInfo.AchievementData;
-                if (SelectedAchievementData != null)
+                var localAchievementsInfoList = GetAchievementInfo(isAchieved);
+                if (localAchievementsInfoList != null && localAchievementsInfoList.Count() > 0)
                 {
-                    //s_AchievementsManager.UnlockAchievement(SelectedAchievementData.GetApiName());
-                    ShowHUDBigInfo(HUDBigInfoMessage($"Achievement {SelectedAchievementTitle} unlocked!"));
-                }
-            }
-            catch (Exception exc)
-            {
-                ModAPI.Log.Write($"[{s_ModName}:{nameof(OnClickUnlockAchievementButton)}] throws exception:\n{exc.Message}");
-            }
-        }
-
-        private string[] GetAchievementTitles(bool isAchieved)
-        {
-            List<string> achievementNames = new List<string>();
-            try
-            {
-                if (s_AchievementsInfo != null)
-                {
-                    var achievements = s_AchievementsInfo.Where(ach => ach.AchievementData.IsAchieved() == isAchieved).ToArray();
-                    if (achievements != null)
+                    foreach (AchievementInfo localAchievementInfo in localAchievementsInfoList)
                     {
-                        foreach (var achievement in achievements)
+                        GUI.contentColor = isAchieved ? Color.green : Color.red;
+                        GUIContent content = new GUIContent(localAchievementInfo.AchievementTitle, localAchievementInfo.AchievementIconTexture, localAchievementInfo.AchievementDescription);
+                        using (var horScope = new GUILayout.HorizontalScope(GUI.skin.box))
                         {
-                            achievementNames.Add(achievement.AchievementTitle);
+                            GUILayout.Label(content, GUI.skin.label);
+
+                            if (!isAchieved)
+                            {
+                                GUI.contentColor = DefaultColor;
+                                if (GUILayout.Button("Unlock", GUI.skin.button))
+                                {
+                                    SelectedAchievementData = localAchievementInfo.AchievementData;
+                                    OnClickUnlockAchievementButton();
+                                    CloseWindow();
+                                }
+                            }
                         }
                     }
                 }
-                return achievementNames.ToArray();
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{s_ModName}:{nameof(GetAchievementTitles)}({nameof(isAchieved)}={isAchieved})] throws exception:\n{exc.Message}");
-                return achievementNames.ToArray();
+                ModAPI.Log.Write($"[{LocalModName}:{nameof(GetAchievementInfo)}({nameof(isAchieved)}={isAchieved})] throws exception:\n{exc.Message}");
+            }
+        }
+
+        private void OnClickUnlockAchievementButton()
+        {
+            try
+            {
+                if (SelectedAchievementData != null && !SelectedAchievementData.IsAchieved())
+                {
+                    //s_AchievementsManager.UnlockAchievement(SelectedAchievementData.GetApiName());
+                    ShowHUDBigInfo(HUDBigInfoMessage($"Achievement {SelectedAchievementData.GetApiName()} unlocked!"));
+                }
+                else
+                {
+                    ShowHUDBigInfo(HUDBigInfoMessage($"Achievement is already unlocked!"));
+                }
+            }
+            catch (Exception exc)
+            {
+                ModAPI.Log.Write($"[{LocalModName}:{nameof(OnClickUnlockAchievementButton)}] throws exception:\n{exc.Message}");
+            }
+        }
+
+        private AchievementInfo[] GetAchievementInfo(bool isAchieved)
+        {
+            AchievementInfo[] achievementInfoArray = default;
+            try
+            {
+                if (LocalAchievementsInfoList != null && LocalAchievementsInfoList.Count > 0)
+                {
+                    achievementInfoArray = LocalAchievementsInfoList.Where(achievementInfo => achievementInfo.AchievementData.IsAchieved() == isAchieved)?.ToArray();
+                }
+                return achievementInfoArray;
+            }
+            catch (Exception exc)
+            {
+                ModAPI.Log.Write($"[{LocalModName}:{nameof(GetAchievementInfo)}({nameof(isAchieved)}={isAchieved})] throws exception:\n{exc.Message}");
+                return achievementInfoArray;
             }
         }
 
@@ -406,7 +410,7 @@ namespace ModAchievements
 
         private void CloseWindow()
         {
-            ShowUI = false;
+            ShowModUI = false;
             EnableCursor(false);
         }
     }

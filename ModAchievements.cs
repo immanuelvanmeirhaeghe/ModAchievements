@@ -235,7 +235,7 @@ namespace ModAchievements
                 if (logDebugInfo)
                 {
                     DebugLogger.AppendLine($"{nameof(AchievementInfo.AchievementID)}\t\t\t\t{nameof(AchievementInfo.AchievementTitle)}\t\t\t\t" +
-                        $"{nameof(AchievementInfo.AchievementData.IsAchieved)}\t\t\t\t{nameof(AchievementInfo.AchievementEvent)}\t\t\t\t{nameof(AchievementInfo.AchievementIconFileName)}");
+                        $"{nameof(AchievementInfo.AchievementData.IsAchieved)}\t\t\t\t{nameof(AchievementInfo.AchievementIconFileUri)}");
                 }
 
                 foreach (string achievementDebugData in LocalAchievementsDebugData)
@@ -254,7 +254,7 @@ namespace ModAchievements
                     if (logDebugInfo)
                     {
                         DebugLogger.AppendLine($"{achievementInfo.AchievementID}\t\t\t\t{achievementInfo.AchievementTitle}\t\t\t\t" +
-                                                                         $"{achievementInfo.AchievementData.IsAchieved()}\t\t\t\t{achievementInfo.AchievementEvent}\t\t\t\t{achievementInfo.AchievementIconFileName}");
+                                                                         $"{achievementInfo.AchievementData.IsAchieved()}\t\t\t\t{achievementInfo.AchievementIconFileUri}");
                     }
                 }
 

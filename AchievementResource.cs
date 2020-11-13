@@ -1,0 +1,416 @@
+﻿using ModAchievements.Enums;
+using UnityEngine;
+
+namespace ModAchievements
+{
+    public static class AchievementResource
+    {
+        public static string GetIconSource(AchievementID id)
+        {
+            string src = string.Empty;
+
+            switch (id)
+            {
+                case AchievementID.ACH_TUTORIAL:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/9eee0f2737e3505f42e990aa37b946ba6a505ace.jpg";
+                    break;
+                case AchievementID.ACH_AYAHUASKA:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/7d48ff16f071bab1810bf23d10824e949f725f8b.jpg";
+                    break;
+                case AchievementID.ACH_GOOD_ENDING:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/ddac862e7273d838e86975a3fb96e40bb67c0b16.jpg";
+                    break;
+                case AchievementID.ACH_BAD_ENDING:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/b03649f43c09f0f7c29af7a17a9d4c42bb14e7cd.jpg";
+                    break;
+                case AchievementID.ACH_GREEDY:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/adc3eceb6ba2589b75b30b917d1fa193ef6f59f0.jpg";
+                    break;
+                case AchievementID.ACH_ENDING_GREENHELL:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/0c149b315e808c7294b9ef34dd2500def5d5c28a.jpg";
+                    break;
+                case AchievementID.ACH_TRAVEL:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/3d3d02fc0e5b463ed75d2e6e433da616fda7834b.jpg";
+                    break;
+                case AchievementID.ACH_START_FIRE:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/07d95d570f03ba93dd94365147a55c22906cb328.jpg";
+                    break;
+                case AchievementID.ACH_WELCOME:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/cec0569cafe5e282f13f55f25f062b49c1f5f41b.jpg";
+                    break;
+                case AchievementID.ACH_SURVIVE_10:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/f25676215bfaaf27b06b39f388fad16d1b396d02.jpg";
+                    break;
+                case AchievementID.ACH_JUST_DIE:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/538d9164de02f1f1becc25727a99c4d9a3c33fbf.jpg";
+                    break;
+                case AchievementID.ACH_CANIBAL:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/1d6725a911ecb2236852a80ee32b1fd6dc08744b.jpg";
+                    break;
+                case AchievementID.ACH_KILL_TRIBE:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/4bb2632dac0ce10bd6ede691a694f8d26ed0d03f.jpg";
+                    break;
+                case AchievementID.ACH_1ST_TOOL:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/b721c3ad4c5bfa8daccc110510ac4afa8d134b53.jpg";
+                    break;
+                case AchievementID.ACH_VEGAN:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/54f083013b95dbba22955c590ecc9a85ab12dd03.jpg";
+                    break;
+                case AchievementID.ACH_PACIFIST:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/1acca53a93784d3411079184ef8f37c585926c60.jpg";
+                    break;
+                case AchievementID.ACH_WILLSON:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/24ea232dff9cf50e2f9520a19aabf5c90d0e2361.jpg";
+                    break;
+                case AchievementID.ACH_MAX_SKILL:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/54f083013b95dbba22955c590ecc9a85ab12dd03.jpg";
+                    break;
+                case AchievementID.ACH_IRONMAN:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/1959e8c3fe87ac893f773da2132e3361cc3a94e8.jpg";
+                    break;
+                case AchievementID.ACH_SAVEGAME:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/e202c4dc5e42b075aba166cd06627b94e48d918a.jpg";
+                    break;
+                case AchievementID.ACH_FIND_STORYCAVE:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/882c15a5c6ed442cd9d1ae7151c8ada83ddf54f4.jpg";
+                    break;
+                case AchievementID.ACH_SANITY_TRIBE:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/e08a8f3b2b4c211f47301a9723572f27e9698041.jpg";
+                    break;
+                case AchievementID.ACH_LEECHES:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/82250f4a905f95016a8fc59e90803a7e73a6129f.jpg";
+                    break;
+                case AchievementID.ACH_HOME:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/af12a4562fe45bcf9bdce5204c6e301266fc8ee1.jpg";
+                    break;
+                case AchievementID.ACH_CURE:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/f9bfc0c3853eadd43850ffcc0e47e26954ea6b14.jpg";
+                    break;
+                case AchievementID.ACH_SAFE_WATER:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/9b648cf8b09e1c167a0c5d02be2b9e92d92ea966.jpg";
+                    break;
+                case AchievementID.ACH_INSOMIA:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/bb3f32820073357b16cb3a6abd56b72fbdff6ed3.jpg";
+                    break;
+                case AchievementID.ACH_FIREPLACE_GOING:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/91e032b74cec0b764977d7043ea7086f983ba73e.jpg";
+                    break;
+                case AchievementID.ACH_TURTLE:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/2e6452b2725d1d15dbec5cf0871ae16d3aa966a2.jpg";
+                    break;
+                case AchievementID.ACH_FISHING:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/3fb836d98fc2ae1e1309ce3d541a615db3cf7a6d.jpg";
+                    break;
+                case AchievementID.ACH_KING_OF_THE_JUNGLE:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/fb98947cabdcd410db35fc38870b350c247ffef1.jpg";
+                    break;
+                case AchievementID.ACH_SNOWMAN:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/479b799bf67e8bf7b16310f3b36fe2304750f36a.jpg";
+                    break;
+                case AchievementID.ACH_ALL_FIRE_TOOLS:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/04cd5412c0a324a7f76603d387eb11174ffccc6f.jpg";
+                    break;
+                case AchievementID.ACH_CATCH_AT_ONCE:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/92903825193ca8578b3b2a44afe93e28b17b7c83.jpg";
+                    break;
+                case AchievementID.ACH_FARMER:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/c69dd38e2faa031bbba4c86edb3002e975e74aa5.jpg";
+                    break;
+                case AchievementID.ACH_ALL_READABLE:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/49121d04b806a5cdbf77773c9ea5c6e7a54c7d7f.jpg";
+                    break;
+                case AchievementID.ACH_MAGGOT_WOUND:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/214a0886b47c73c792a02ad2ce915473681b712d.jpg";
+                    break;
+                case AchievementID.ACH_ALL_SICKNESS:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/04cef9a8bef4e235fb35c018c87a1ccab7385bc0.jpg";
+                    break;
+                case AchievementID.ACH_ALL_CHALLENGES:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/44529f5d11a60898254094a32267d55d8cad63b2.jpg";
+                    break;
+                case AchievementID.ACH_FULL_MAP:
+                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/3d0ac02c63b8349ce12deb028d58a5221257a38f.jpg";
+                    break;
+                default:
+                    src = string.Empty;
+                    break;
+            }
+
+            return src;
+        }
+
+        public static Texture2D GetIconImage(string path)
+        {
+            Texture2D tex = (Texture2D)Resources.Load(path);
+            return tex;
+        }
+
+        public static string GetTitle(AchievementID id)
+        {
+            string Title = string.Empty;
+
+            switch (id)
+            {
+                case AchievementID.ACH_TUTORIAL:
+                    Title = $"You are not prepared";
+                    break;
+                case AchievementID.ACH_AYAHUASKA:
+                    Title = $"Soul Vine";
+                    break;
+                case AchievementID.ACH_GOOD_ENDING:
+                    Title = $"Just, wait for me…";
+                    break;
+                case AchievementID.ACH_BAD_ENDING:
+                    Title = $"It's all over, again";
+                    break;
+                case AchievementID.ACH_GREEDY:
+                    Title = $"Greedy";
+                    break;
+                case AchievementID.ACH_ENDING_GREENHELL:
+                    Title = $"Green Hell";
+                    break;
+                case AchievementID.ACH_TRAVEL:
+                    Title = $"Globetrotter";
+                    break;
+                case AchievementID.ACH_START_FIRE:
+                    Title = $"I made fire!";
+                    break;
+                case AchievementID.ACH_WELCOME:
+                    Title = $"Welcome to the jungle";
+                    break;
+                case AchievementID.ACH_SURVIVE_10:
+                    Title = $"I made it";
+                    break;
+                case AchievementID.ACH_JUST_DIE:
+                    Title = $"The first step to greatness";
+                    break;
+                case AchievementID.ACH_CANIBAL:
+                    Title = $"Tastes like chicken...";
+                    break;
+                case AchievementID.ACH_KILL_TRIBE:
+                    Title = $"Self-defense";
+                    break;
+                case AchievementID.ACH_1ST_TOOL:
+                    Title = $"Caveman";
+                    break;
+                case AchievementID.ACH_VEGAN:
+                    Title = $"Vegan!";
+                    break;
+                case AchievementID.ACH_PACIFIST:
+                    Title = $"Pacifist";
+                    break;
+                case AchievementID.ACH_WILLSON:
+                    Title = $"Casted Far Away";
+                    break;
+                case AchievementID.ACH_MAX_SKILL:
+                    Title = $"Making progress";
+                    break;
+                case AchievementID.ACH_IRONMAN:
+                    Title = $"Iron Man";
+                    break;
+                case AchievementID.ACH_SAVEGAME:
+                    Title = $"I'm saved";
+                    break;
+                case AchievementID.ACH_FIND_STORYCAVE:
+                    Title = $"It's all their fault";
+                    break;
+                case AchievementID.ACH_SANITY_TRIBE:
+                    Title = $"Am I losing it?";
+                    break;
+                case AchievementID.ACH_LEECHES:
+                    Title = $"Leeches, leeches everywhere";
+                    break;
+                case AchievementID.ACH_HOME:
+                    Title = $"Home Sweet Home";
+                    break;
+                case AchievementID.ACH_CURE:
+                    Title = $"I have it!";
+                    break;
+                case AchievementID.ACH_SAFE_WATER:
+                    Title = $"Fresh Water";
+                    break;
+                case AchievementID.ACH_INSOMIA:
+                    Title = $"I don't need to sleep";
+                    break;
+                case AchievementID.ACH_FIREPLACE_GOING:
+                    Title = $"Keeper of the flame";
+                    break;
+                case AchievementID.ACH_TURTLE:
+                    Title = $"Going back home";
+                    break;
+                case AchievementID.ACH_FISHING:
+                    Title = $"Gotcha!";
+                    break;
+                case AchievementID.ACH_KING_OF_THE_JUNGLE:
+                    Title = $"King of the jungle";
+                    break;
+                case AchievementID.ACH_SNOWMAN:
+                    Title = $"Do you want to play with a snowman?";
+                    break;
+                case AchievementID.ACH_ALL_FIRE_TOOLS:
+                    Title = $"Pyromaniac";
+                    break;
+                case AchievementID.ACH_CATCH_AT_ONCE:
+                    Title = $"Got to catch them all";
+                    break;
+                case AchievementID.ACH_FARMER:
+                    Title = $"Gardener";
+                    break;
+                case AchievementID.ACH_ALL_READABLE:
+                    Title = $"Librarian";
+                    break;
+                case AchievementID.ACH_MAGGOT_WOUND:
+                    Title = $"Improvise, adapt, survive";
+                    break;
+                case AchievementID.ACH_ALL_SICKNESS:
+                    Title = $"Mr... I don't feel so good";
+                    break;
+                case AchievementID.ACH_ALL_CHALLENGES:
+                    Title = $"I'm not afraid of any work";
+                    break;
+                case AchievementID.ACH_FULL_MAP:
+                    Title = $"Cartographer";
+                    break;
+                default:
+                    Title = string.Empty;
+                    break;
+            }
+
+            return Title;
+        }
+
+        public static string GetDescription(AchievementID id)
+        {
+            string Description = string.Empty;
+
+            switch (id)
+            {
+                case AchievementID.ACH_TUTORIAL:
+                    Description = $"Finish the tutorial";
+                    break;
+                case AchievementID.ACH_AYAHUASKA:
+                    Description = $"Drink Ayahuasca";
+                    break;
+                case AchievementID.ACH_GOOD_ENDING:
+                    Description = $"Finish the Story - \"Good\" Ending";
+                    break;
+                case AchievementID.ACH_BAD_ENDING:
+                    Description = $"Finish the Story - \"Bad\" Ending";
+                    break;
+                case AchievementID.ACH_GREEDY:
+                    Description = $"Complete Story mode on any difficulty with gold sack in backpack";
+                    break;
+                case AchievementID.ACH_ENDING_GREENHELL:
+                    Description = $"Finish the game on Green Hell difficulty level";
+                    break;
+                case AchievementID.ACH_TRAVEL:
+                    Description = $"Travel 64 km";
+                    break;
+                case AchievementID.ACH_START_FIRE:
+                    Description = $"Start a fire";
+                    break;
+                case AchievementID.ACH_WELCOME:
+                    Description = $"Survive 1 night in the jungle";
+                    break;
+                case AchievementID.ACH_SURVIVE_10:
+                    Description = $"Survive 10 days on King of the Jungle difficulty or higher";
+                    break;
+                case AchievementID.ACH_JUST_DIE:
+                    Description = $"Die";
+                    break;
+                case AchievementID.ACH_CANIBAL:
+                    Description = $"Eat human meat";
+                    break;
+                case AchievementID.ACH_KILL_TRIBE:
+                    Description = $"Kill a tribesman";
+                    break;
+                case AchievementID.ACH_1ST_TOOL:
+                    Description = $"Craft your first tool";
+                    break;
+                case AchievementID.ACH_VEGAN:
+                    Description = $"Survive 25 days solely on mushroom and plant-based food on Welcome to the Jungle difficulty or higher";
+                    break;
+                case AchievementID.ACH_PACIFIST:
+                    Description = $"Survive 10 days on King of the Jungle difficulty or higher without killing animals, humans, destroying bee nests and interacting with traps";
+                    break;
+                case AchievementID.ACH_WILLSON:
+                    Description = $"Casted Far Away";
+                    break;
+                case AchievementID.ACH_MAX_SKILL:
+                    Description = $"Reach Max at any skill";
+                    break;
+                case AchievementID.ACH_IRONMAN:
+                    Description = $"Create and wear a full metal armor set";
+                    break;
+                case AchievementID.ACH_SAVEGAME:
+                    Description = $"Save your game in a shelter";
+                    break;
+                case AchievementID.ACH_FIND_STORYCAVE:
+                    Description = $"It's all their fault";
+                    break;
+                case AchievementID.ACH_SANITY_TRIBE:
+                    Description = $"Kill a Sanity tribesman";
+                    break;
+                case AchievementID.ACH_LEECHES:
+                    Description = $"Remove 50 leeches from your body";
+                    break;
+                case AchievementID.ACH_HOME:
+                    Description = $"Build your first shelter";
+                    break;
+                case AchievementID.ACH_CURE:
+                    Description = $"Find the Cure";
+                    break;
+                case AchievementID.ACH_SAFE_WATER:
+                    Description = $"Drink safe water";
+                    break;
+                case AchievementID.ACH_INSOMIA:
+                    Description = $"Get 5 stacks of insomnia";
+                    break;
+                case AchievementID.ACH_FIREPLACE_GOING:
+                    Description = $"Keep a single fire burning for over 5 days on Welcome to the jungle difficulty or higher";
+                    break;
+                case AchievementID.ACH_TURTLE:
+                    Description = $"Make tortoise soup in it's shell";
+                    break;
+                case AchievementID.ACH_FISHING:
+                    Description = $"Catch 9 aquatic animals";
+                    break;
+                case AchievementID.ACH_KING_OF_THE_JUNGLE:
+                    Description = $"Hunt a Rattlesnake, Jaguar, Puma, Caiman and 3 types of arachnids";
+                    break;
+                case AchievementID.ACH_SNOWMAN:
+                    Description = $"Find a snowman package in 3 different locations";
+                    break;
+                case AchievementID.ACH_ALL_FIRE_TOOLS:
+                    Description = $"Unlock 4 fire starting tools";
+                    break;
+                case AchievementID.ACH_CATCH_AT_ONCE:
+                    Description = $"Experience 12 unique diseases and wounds";
+                    break;
+                case AchievementID.ACH_FARMER:
+                    Description = $"Cultivate 12 different plants";
+                    break;
+                case AchievementID.ACH_ALL_READABLE:
+                    Description = $"Read 50 collectibles";
+                    break;
+                case AchievementID.ACH_MAGGOT_WOUND:
+                    Description = $"Let maggots eat your infected wound";
+                    break;
+                case AchievementID.ACH_ALL_SICKNESS:
+                    Description = $"At the same time get leeches, worm, rash, fever, poison, food poisoning, parasites, insomnia, dirt and any wound";
+                    break;
+                case AchievementID.ACH_ALL_CHALLENGES:
+                    Description = $"Complete 7 Challenges";
+                    break;
+                case AchievementID.ACH_FULL_MAP:
+                    Description = $"Unlock 60 places on the map";
+                    break;
+                default:
+                    Description = string.Empty;
+                    break;
+            }
+
+            return Description;
+        }
+    }
+}

@@ -23,6 +23,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AchievementInfo.cs" />
+    <Compile Include="AchievementResource.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Extensions\PlayerExtended.cs" />
     <Compile Include="ModAchievements.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

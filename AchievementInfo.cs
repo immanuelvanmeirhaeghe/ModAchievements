@@ -28,8 +28,9 @@ namespace ModAchievements
 
         public IEnumerator StartGetTexture(string iconFileUriString)
         {
-            var getTexture = GetIconTexture(iconFileUriString);
-            yield return StartCoroutine(getTexture);
+            //var getTexture = GetIconTexture(iconFileUriString);
+            //yield return StartCoroutine(getTexture);
+            yield return AchievementResource.GetIconTexture(iconFileUriString);
         }
 
         public AchievementInfo(string apiName = "ACH_UNKNOWN", AchievementData achievementData = default)
@@ -226,10 +227,10 @@ namespace ModAchievements
             return iconFileUri;
         }
 
-        private IEnumerator GetIconTexture(string iconFileUriString)
-        {
-            yield return AchievementResource.GetIconTexture(iconFileUriString);
-        }
+        //private IEnumerator GetIconTexture(string iconFileUriString)
+        //{
+        //    yield return AchievementResource.GetIconTexture(iconFileUriString);
+        //}
 
         private string GetTitle(AchievementID achievementID)
         {

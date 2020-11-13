@@ -31,9 +31,9 @@ namespace ModAchievements
             {
                 AchievementID = EnumUtils<AchievementID>.GetValue(apiName.ToUpper());
                 AchievementData = achievementData;
-                AchievementEvent = GetAchievementEvent(AchievementID);
+                AchievementEvent = GetEvent(AchievementID);
                 AchievementIconFileUri = GetIconFileUri(AchievementID);
-                AchievementIconTexture = GetIconTexture(AchievementID);
+                //AchievementIconTexture = GetIconTexture(AchievementID);
                 AchievementIconFileName = GetIconFileName(AchievementID);
                 AchievementTitle = GetTitle(AchievementID);
                 AchievementDescription = GetDescription(AchievementID);
@@ -41,17 +41,18 @@ namespace ModAchievements
             catch (Exception exc)
             {
                 ModAPI.Log.Write($"[{nameof(AchievementInfo)}:{nameof(AchievementInfo)}({nameof(apiName)} = {apiName}, {nameof(achievementData)} = {achievementData}] throws exception:\n{exc.Message}");
+                throw exc;
             }
         }
 
         private string GetIconFileName(AchievementID achievementID)
         {
-            string uriString = AchievementResource.GetIconFileUriString(achievementID);
-            string iconFileName = uriString.Replace(AchievementResource.SteamAchievementIconBaseUri, string.Empty);
+            string iconFileUriString = AchievementResource.GetIconFileUriString(achievementID);
+            string iconFileName = iconFileUriString.Replace(AchievementResource.SteamAchievementIconBaseUri, string.Empty);
             return iconFileName;
         }
 
-        private AchivementsEvent GetAchievementEvent(AchievementID achievementID)
+        private AchivementsEvent GetEvent(AchievementID achievementID)
         {
             Event event_type;
             switch (achievementID)
@@ -213,8 +214,8 @@ namespace ModAchievements
 
         private Uri GetIconFileUri(AchievementID achievementID)
         {
-            string uriString = AchievementResource.GetIconFileUriString(achievementID);
-            Uri uri = new Uri(uriString);
+            string iconFileUriString = AchievementResource.GetIconFileUriString(achievementID);
+            Uri uri = new Uri(iconFileUriString);
             return uri;
         }
 

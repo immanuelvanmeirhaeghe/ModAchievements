@@ -1,154 +1,155 @@
 ﻿using ModAchievements.Enums;
+using System;
 using UnityEngine;
 
 namespace ModAchievements
 {
     public static class AchievementResource
     {
-        public static string GetIconSource(AchievementID id)
-        {
-            string src = string.Empty;
+        public static readonly string ImageBaseUri = @"https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/";
 
+        public static string GetIconFileUri(AchievementID id)
+        {
+            string uriString;
             switch (id)
             {
                 case AchievementID.ACH_TUTORIAL:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/9eee0f2737e3505f42e990aa37b946ba6a505ace.jpg";
+                    uriString = $@"{ImageBaseUri}9eee0f2737e3505f42e990aa37b946ba6a505ace.jpg";
                     break;
                 case AchievementID.ACH_AYAHUASKA:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/7d48ff16f071bab1810bf23d10824e949f725f8b.jpg";
+                    uriString = $@"{ImageBaseUri}7d48ff16f071bab1810bf23d10824e949f725f8b.jpg";
                     break;
                 case AchievementID.ACH_GOOD_ENDING:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/ddac862e7273d838e86975a3fb96e40bb67c0b16.jpg";
+                    uriString = $@"{ImageBaseUri}ddac862e7273d838e86975a3fb96e40bb67c0b16.jpg";
                     break;
                 case AchievementID.ACH_BAD_ENDING:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/b03649f43c09f0f7c29af7a17a9d4c42bb14e7cd.jpg";
+                    uriString = $@"{ImageBaseUri}b03649f43c09f0f7c29af7a17a9d4c42bb14e7cd.jpg";
                     break;
                 case AchievementID.ACH_GREEDY:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/adc3eceb6ba2589b75b30b917d1fa193ef6f59f0.jpg";
+                    uriString = $@"{ImageBaseUri}adc3eceb6ba2589b75b30b917d1fa193ef6f59f0.jpg";
                     break;
                 case AchievementID.ACH_ENDING_GREENHELL:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/0c149b315e808c7294b9ef34dd2500def5d5c28a.jpg";
+                    uriString = $@"{ImageBaseUri}0c149b315e808c7294b9ef34dd2500def5d5c28a.jpg";
                     break;
                 case AchievementID.ACH_TRAVEL:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/3d3d02fc0e5b463ed75d2e6e433da616fda7834b.jpg";
+                    uriString = $@"{ImageBaseUri}3d3d02fc0e5b463ed75d2e6e433da616fda7834b.jpg";
                     break;
                 case AchievementID.ACH_START_FIRE:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/07d95d570f03ba93dd94365147a55c22906cb328.jpg";
+                    uriString = $@"{ImageBaseUri}07d95d570f03ba93dd94365147a55c22906cb328.jpg";
                     break;
                 case AchievementID.ACH_WELCOME:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/cec0569cafe5e282f13f55f25f062b49c1f5f41b.jpg";
+                    uriString = $@"{ImageBaseUri}cec0569cafe5e282f13f55f25f062b49c1f5f41b.jpg";
                     break;
                 case AchievementID.ACH_SURVIVE_10:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/f25676215bfaaf27b06b39f388fad16d1b396d02.jpg";
+                    uriString = $@"{ImageBaseUri}f25676215bfaaf27b06b39f388fad16d1b396d02.jpg";
                     break;
                 case AchievementID.ACH_JUST_DIE:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/538d9164de02f1f1becc25727a99c4d9a3c33fbf.jpg";
+                    uriString = $@"{ImageBaseUri}538d9164de02f1f1becc25727a99c4d9a3c33fbf.jpg";
                     break;
                 case AchievementID.ACH_CANIBAL:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/1d6725a911ecb2236852a80ee32b1fd6dc08744b.jpg";
+                    uriString = $@"{ImageBaseUri}1d6725a911ecb2236852a80ee32b1fd6dc08744b.jpg";
                     break;
                 case AchievementID.ACH_KILL_TRIBE:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/4bb2632dac0ce10bd6ede691a694f8d26ed0d03f.jpg";
+                    uriString = $@"{ImageBaseUri}4bb2632dac0ce10bd6ede691a694f8d26ed0d03f.jpg";
                     break;
                 case AchievementID.ACH_1ST_TOOL:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/b721c3ad4c5bfa8daccc110510ac4afa8d134b53.jpg";
+                    uriString = $@"{ImageBaseUri}b721c3ad4c5bfa8daccc110510ac4afa8d134b53.jpg";
                     break;
                 case AchievementID.ACH_VEGAN:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/54f083013b95dbba22955c590ecc9a85ab12dd03.jpg";
+                    uriString = $@"{ImageBaseUri}54f083013b95dbba22955c590ecc9a85ab12dd03.jpg";
                     break;
                 case AchievementID.ACH_PACIFIST:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/1acca53a93784d3411079184ef8f37c585926c60.jpg";
+                    uriString = $@"{ImageBaseUri}1acca53a93784d3411079184ef8f37c585926c60.jpg";
                     break;
                 case AchievementID.ACH_WILLSON:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/24ea232dff9cf50e2f9520a19aabf5c90d0e2361.jpg";
+                    uriString = $@"{ImageBaseUri}24ea232dff9cf50e2f9520a19aabf5c90d0e2361.jpg";
                     break;
                 case AchievementID.ACH_MAX_SKILL:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/54f083013b95dbba22955c590ecc9a85ab12dd03.jpg";
+                    uriString = $@"{ImageBaseUri}54f083013b95dbba22955c590ecc9a85ab12dd03.jpg";
                     break;
                 case AchievementID.ACH_IRONMAN:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/1959e8c3fe87ac893f773da2132e3361cc3a94e8.jpg";
+                    uriString = $@"{ImageBaseUri}1959e8c3fe87ac893f773da2132e3361cc3a94e8.jpg";
                     break;
                 case AchievementID.ACH_SAVEGAME:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/e202c4dc5e42b075aba166cd06627b94e48d918a.jpg";
+                    uriString = $@"{ImageBaseUri}e202c4dc5e42b075aba166cd06627b94e48d918a.jpg";
                     break;
                 case AchievementID.ACH_FIND_STORYCAVE:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/882c15a5c6ed442cd9d1ae7151c8ada83ddf54f4.jpg";
+                    uriString = $@"{ImageBaseUri}882c15a5c6ed442cd9d1ae7151c8ada83ddf54f4.jpg";
                     break;
                 case AchievementID.ACH_SANITY_TRIBE:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/e08a8f3b2b4c211f47301a9723572f27e9698041.jpg";
+                    uriString = $@"{ImageBaseUri}e08a8f3b2b4c211f47301a9723572f27e9698041.jpg";
                     break;
                 case AchievementID.ACH_LEECHES:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/82250f4a905f95016a8fc59e90803a7e73a6129f.jpg";
+                    uriString = $@"{ImageBaseUri}82250f4a905f95016a8fc59e90803a7e73a6129f.jpg";
                     break;
                 case AchievementID.ACH_HOME:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/af12a4562fe45bcf9bdce5204c6e301266fc8ee1.jpg";
+                    uriString = $@"{ImageBaseUri}af12a4562fe45bcf9bdce5204c6e301266fc8ee1.jpg";
                     break;
                 case AchievementID.ACH_CURE:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/f9bfc0c3853eadd43850ffcc0e47e26954ea6b14.jpg";
+                    uriString = $@"{ImageBaseUri}f9bfc0c3853eadd43850ffcc0e47e26954ea6b14.jpg";
                     break;
                 case AchievementID.ACH_SAFE_WATER:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/9b648cf8b09e1c167a0c5d02be2b9e92d92ea966.jpg";
+                    uriString = $@"{ImageBaseUri}9b648cf8b09e1c167a0c5d02be2b9e92d92ea966.jpg";
                     break;
                 case AchievementID.ACH_INSOMIA:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/bb3f32820073357b16cb3a6abd56b72fbdff6ed3.jpg";
+                    uriString = $@"{ImageBaseUri}bb3f32820073357b16cb3a6abd56b72fbdff6ed3.jpg";
                     break;
                 case AchievementID.ACH_FIREPLACE_GOING:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/91e032b74cec0b764977d7043ea7086f983ba73e.jpg";
+                    uriString = $@"{ImageBaseUri}91e032b74cec0b764977d7043ea7086f983ba73e.jpg";
                     break;
                 case AchievementID.ACH_TURTLE:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/2e6452b2725d1d15dbec5cf0871ae16d3aa966a2.jpg";
+                    uriString = $@"{ImageBaseUri}2e6452b2725d1d15dbec5cf0871ae16d3aa966a2.jpg";
                     break;
                 case AchievementID.ACH_FISHING:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/3fb836d98fc2ae1e1309ce3d541a615db3cf7a6d.jpg";
+                    uriString = $@"{ImageBaseUri}3fb836d98fc2ae1e1309ce3d541a615db3cf7a6d.jpg";
                     break;
                 case AchievementID.ACH_KING_OF_THE_JUNGLE:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/fb98947cabdcd410db35fc38870b350c247ffef1.jpg";
+                    uriString = $@"{ImageBaseUri}fb98947cabdcd410db35fc38870b350c247ffef1.jpg";
                     break;
                 case AchievementID.ACH_SNOWMAN:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/479b799bf67e8bf7b16310f3b36fe2304750f36a.jpg";
+                    uriString = $@"{ImageBaseUri}479b799bf67e8bf7b16310f3b36fe2304750f36a.jpg";
                     break;
                 case AchievementID.ACH_ALL_FIRE_TOOLS:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/04cd5412c0a324a7f76603d387eb11174ffccc6f.jpg";
+                    uriString = $@"{ImageBaseUri}04cd5412c0a324a7f76603d387eb11174ffccc6f.jpg";
                     break;
                 case AchievementID.ACH_CATCH_AT_ONCE:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/92903825193ca8578b3b2a44afe93e28b17b7c83.jpg";
+                    uriString = $@"{ImageBaseUri}92903825193ca8578b3b2a44afe93e28b17b7c83.jpg";
                     break;
                 case AchievementID.ACH_FARMER:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/c69dd38e2faa031bbba4c86edb3002e975e74aa5.jpg";
+                    uriString = $@"{ImageBaseUri}c69dd38e2faa031bbba4c86edb3002e975e74aa5.jpg";
                     break;
                 case AchievementID.ACH_ALL_READABLE:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/49121d04b806a5cdbf77773c9ea5c6e7a54c7d7f.jpg";
+                    uriString = $@"{ImageBaseUri}49121d04b806a5cdbf77773c9ea5c6e7a54c7d7f.jpg";
                     break;
                 case AchievementID.ACH_MAGGOT_WOUND:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/214a0886b47c73c792a02ad2ce915473681b712d.jpg";
+                    uriString = $@"{ImageBaseUri}deb806485c0a3dd2b50b11b02c336acff9430107.jpg";
                     break;
                 case AchievementID.ACH_ALL_SICKNESS:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/04cef9a8bef4e235fb35c018c87a1ccab7385bc0.jpg";
+                    uriString = $@"{ImageBaseUri}bd3fd7d4fa4d6b9f7f9fa3ede94d3580d5fc652a.jpg";
                     break;
                 case AchievementID.ACH_ALL_CHALLENGES:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/44529f5d11a60898254094a32267d55d8cad63b2.jpg";
+                    uriString = $@"{ImageBaseUri}aff8c61825b9f758e3351912972ad6709d252387.jpg";
                     break;
                 case AchievementID.ACH_FULL_MAP:
-                    src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/3d0ac02c63b8349ce12deb028d58a5221257a38f.jpg";
+                    uriString = $@"{ImageBaseUri}709cf04c4bc39012d62e9bc37b03dad0b34dc289.jpg";
                     break;
                 default:
-                    src = string.Empty;
+                    uriString = string.Empty;
                     break;
             }
-
-            return src;
+            return uriString;
         }
 
-        public static Texture2D GetIconImage(string path)
+        public static Texture2D GetIconImage(string iconFileName)
         {
-            Texture2D tex = (Texture2D)Resources.Load(path);
+            string fileName = iconFileName.Split('.')[0];
+            Texture2D tex = (Texture2D)(Resources.Load(fileName));
             return tex;
         }
 
         public static string GetTitle(AchievementID id)
         {
-            string Title = string.Empty;
-
+            string Title;
             switch (id)
             {
                 case AchievementID.ACH_TUTORIAL:
@@ -281,8 +282,7 @@ namespace ModAchievements
 
         public static string GetDescription(AchievementID id)
         {
-            string Description = string.Empty;
-
+            string Description;
             switch (id)
             {
                 case AchievementID.ACH_TUTORIAL:

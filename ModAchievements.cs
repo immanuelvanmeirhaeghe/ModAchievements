@@ -373,7 +373,7 @@ namespace ModAchievements
             {
                 if (SelectedAchievementData != null && !SelectedAchievementData.IsAchieved())
                 {
-                    //s_AchievementsManager.UnlockAchievement(SelectedAchievementData.GetApiName());
+                    LocalAchievementsManager.UnlockAchievement(SelectedAchievementData.GetApiName());
                     ShowHUDBigInfo(HUDBigInfoMessage($"Achievement {SelectedAchievementData.GetApiName()} unlocked!"));
                 }
                 else

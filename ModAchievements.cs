@@ -331,8 +331,7 @@ namespace ModAchievements
         {
             if (IsLocalMenuDebugAchievementsShown && LocalMenuDebugAchievements != null)
             {
-                LocalDebugMenuAchievementsScreen = default;
-
+                //LocalDebugMenuAchievementsScreen = default;
                 LocalMenuDebugAchievements.Hide();
                 IsLocalMenuDebugAchievementsShown = false;
             }
@@ -341,28 +340,33 @@ namespace ModAchievements
                 LocalMenuDebugAchievements = (MenuDebugAchievements)LocalMenuInGameManager.GetMenu(typeof(MenuDebugAchievements));
                 if (LocalMenuDebugAchievements != null)
                 {
-                    ShowDebugMenuAchievements();
+                    //ShowDebugMenuAchievements();
+                    LocalMenuDebugAchievements.Show();
                     IsLocalMenuDebugAchievementsShown = true;
                 }
             }
         }
 
-        private void ShowDebugMenuAchievements()
-        {
-            int wid = GetHashCode();
-            LocalDebugMenuAchievementsScreen = GUILayout.Window(wid, ModAchievementsScreen, InitDebugMenuAchievementsScreen, nameof(MenuDebugAchievements), GUI.skin.window,
-                                                                                                  GUILayout.ExpandWidth(true),
-                                                                                                  GUILayout.MinWidth(ModScreenMinWidth / 2f),
-                                                                                                  GUILayout.MaxWidth(ModScreenMaxWidth / 2f),
-                                                                                                  GUILayout.ExpandHeight(true),
-                                                                                                  GUILayout.MinHeight(ModScreenMinHeight / 2f),
-                                                                                                  GUILayout.MaxHeight(ModScreenMaxHeight / 2f));
-        }
+        //private void ShowDebugMenuAchievements()
+        //{
+        //    int wid = GetHashCode();
+        //    LocalDebugMenuAchievementsScreen = GUILayout.Window(wid, ModAchievementsScreen, InitDebugMenuAchievementsScreen, nameof(MenuDebugAchievements), GUI.skin.window,
+        //                                                                                          GUILayout.ExpandWidth(true),
+        //                                                                                          GUILayout.MinWidth(ModScreenMinWidth / 2f),
+        //                                                                                          GUILayout.MaxWidth(ModScreenMaxWidth / 2f),
+        //                                                                                          GUILayout.ExpandHeight(true),
+        //                                                                                          GUILayout.MinHeight(ModScreenMinHeight / 2f),
+        //                                                                                          GUILayout.MaxHeight(ModScreenMaxHeight / 2f));
+        //}
 
-        private void InitDebugMenuAchievementsScreen(int id)
-        {
-            LocalMenuDebugAchievements.Show();
-        }
+        //private void InitDebugMenuAchievementsScreen(int id)
+        //{
+        //    using (var debugMenuContentScope = new GUILayout.VerticalScope(GUI.skin.box))
+        //    {
+
+        //    }
+        //    GUI.DragWindow(new Rect(0f, 0f, 10000f, 10000f));
+        //}
 
         private void UnlockedAchievementsScrollView()
         {

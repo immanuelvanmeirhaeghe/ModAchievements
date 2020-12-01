@@ -28,8 +28,6 @@ namespace ModAchievements
 
         public IEnumerator StartGetTexture(string iconFileUriString)
         {
-            //var getTexture = GetIconTexture(iconFileUriString);
-            //yield return StartCoroutine(getTexture);
             yield return AchievementResource.GetIconTexture(iconFileUriString);
         }
 
@@ -48,7 +46,7 @@ namespace ModAchievements
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{nameof(AchievementInfo)}:{nameof(AchievementInfo)}({nameof(apiName)} = {apiName}, {nameof(achievementData)} = {achievementData}] throws exception:\n{exc.Message}");
+                ModAPI.Log.Write($"[{nameof(AchievementInfo)}({nameof(apiName)} = {apiName}, {nameof(achievementData)} = {achievementData}] throws exception:\n{exc.Message}");
                 throw exc;
             }
         }

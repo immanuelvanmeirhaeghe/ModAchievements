@@ -51,4 +51,10 @@ namespace ModAchievements.Enums
         ACH_FULL_MAP
     }
 
+    public enum MessageType
+    {
+        Info,
+        Warning,
+        Error
+    }
 }

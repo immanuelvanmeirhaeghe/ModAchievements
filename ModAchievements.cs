@@ -6,22 +6,43 @@ using UnityEngine;
 
 namespace ModAchievements
 {
+    /// <summary>
+    /// ModAchievements is a mod for Green Hell, that allows a player to manage Steam achievements.
+    /// Enable the mod UI by pressing Home.
+    /// </summary>
     public class ModAchievements : MonoBehaviour
     {
+        private static readonly string ModName = nameof(ModAchievements);
+        private static readonly StringBuilder AchievementInfoLogger = new StringBuilder($"{ModName} debug info");
+        private static readonly float ModScreenTotalWidth = 500f;
+        private static readonly float ModScreenTotalHeight = 150f;
+        private static readonly float ModScreenMinWidth = 450f;
+        private static readonly float ModScreenMaxWidth = 550f;
+        private static readonly float ModScreenMinHeight = 50f;
+        private static readonly float ModScreenMaxHeight = 200f;
+
         private static ModAchievements Instance;
         private static HUDManager LocalHUDManager;
         private static MenuInGameManager LocalMenuInGameManager;
         private static AchievementsManager LocalAchievementsManager;
         private static Player LocalPlayer;
-        private static bool AchievementDataLoaded = false;
         private static MenuDebugAchievements LocalMenuDebugAchievements;
-        private static readonly StringBuilder DebugLogger = new StringBuilder($"Achievements debug info");
-        private static readonly string LocalModName = nameof(ModAchievements);
-        private static Color DefaultColor;
+        private static Color LocalDefaultColor;
 
-        public static bool LogLocalDebugInfoOption { get; private set; }
-        public static bool IsLocalMenuDebugAchievementsShown { get; private set; }
-        public static Rect ModModAchievementsScreen = new Rect(Screen.width / 40f, Screen.height / 40f, 750f, 450f);
+        private static float ModScreenStartPositionX { get; set; } = (Screen.width - ModScreenMaxWidth) % ModScreenTotalWidth;
+        private static float ModScreenStartPositionY { get; set; } = (Screen.height - ModScreenMaxHeight) % ModScreenTotalHeight;
+        private static bool IsMinimized { get; set; } = false;
+        private bool ShowModUI = false;
+
+        public bool IsModActiveForMultiplayer { get; private set; } = false;
+        public bool IsModActiveForSingleplayer => ReplTools.AmIMaster();
+
+        public static bool AchievementDataLoaded { get; set; } = false;
+        public static bool LogAchievementInfoOption { get; private set; } = false;
+        public static bool IsLocalMenuDebugAchievementsShown { get; private set; } = false;
+
+        public static Rect LocalDebugMenuAchievementsScreen = new Rect(ModAchievementsScreen.x, ModAchievementsScreen.y, ModAchievementsScreen.width / 2f, ModAchievementsScreen.height / 2f);
+        public static Rect ModAchievementsScreen = new Rect(ModScreenStartPositionX, ModScreenStartPositionY, ModScreenTotalWidth, ModScreenTotalHeight);
         public static Vector2 UnlockedAchievementsScrollViewPosition;
         public static Vector2 LockedAchievementsScrollViewPosition;
 
@@ -37,18 +58,13 @@ namespace ModAchievements
         public static string PermissionChangedMessage(string message)
             => $"Permission to use mods and cheats in multiplayer was {message}";
 
-        private bool ShowModUI = false;
-
-        public bool IsModActiveForMultiplayer { get; private set; }
-        public bool IsModActiveForSingleplayer => ReplTools.AmIMaster();
-
         public void ShowHUDBigInfo(string text)
         {
-            string header = $"{LocalModName} Info";
+            string header = $"{ModName} Info";
             string textureName = HUDInfoLogTextureType.Count.ToString();
 
             HUDBigInfo bigInfo = (HUDBigInfo)LocalHUDManager.GetHUD(typeof(HUDBigInfo));
-            HUDBigInfoData.s_Duration = 4f;
+            HUDBigInfoData.s_Duration = 2f;
             HUDBigInfoData bigInfoData = new HUDBigInfoData
             {
                 m_Header = header,
@@ -68,7 +84,7 @@ namespace ModAchievements
         public void Start()
         {
             ModManager.ModManager.onPermissionValueChanged += ModManager_onPermissionValueChanged;
-            DefaultColor = GUI.contentColor;
+            LocalDefaultColor = GUI.contentColor;
         }
 
         private void ModManager_onPermissionValueChanged(bool optionValue)
@@ -90,15 +106,6 @@ namespace ModAchievements
         public static ModAchievements Get()
         {
             return Instance;
-        }
-
-        public void ShowHUDInfoLog(string itemID, string localizedTextKey)
-        {
-            var localization = GreenHellGame.Instance.GetLocalization();
-            HUDMessages hUDMessages = (HUDMessages)LocalHUDManager.GetHUD(typeof(HUDMessages));
-            hUDMessages.AddMessage(
-                $"{localization.Get(localizedTextKey)}  {localization.Get(itemID)}"
-                );
         }
 
         private void EnableCursor(bool blockPlayer = false)
@@ -149,7 +156,13 @@ namespace ModAchievements
         private void InitWindow()
         {
             int wid = GetHashCode();
-            ModModAchievementsScreen = GUILayout.Window(wid, ModModAchievementsScreen, InitModAchievementsScreen, $"{LocalModName}", GUI.skin.window);
+            ModAchievementsScreen = GUILayout.Window(wid, ModAchievementsScreen, InitModAchievementsScreen, ModName, GUI.skin.window,
+                                                                                                          GUILayout.ExpandWidth(true),
+                                                                                                          GUILayout.MinWidth(ModScreenMinWidth),
+                                                                                                          GUILayout.MaxWidth(ModScreenMaxWidth),
+                                                                                                          GUILayout.ExpandHeight(true),
+                                                                                                          GUILayout.MinHeight(ModScreenMinHeight),
+                                                                                                          GUILayout.MaxHeight(ModScreenMaxHeight));
         }
 
         private void InitData()
@@ -167,11 +180,17 @@ namespace ModAchievements
 
         private void InitModAchievementsScreen(int windowID)
         {
-            using (var verticalScope = new GUILayout.VerticalScope(GUI.skin.box))
+            ModScreenStartPositionX = ModAchievementsScreen.x;
+            ModScreenStartPositionY = ModAchievementsScreen.y;
+
+            using (var modContentScope = new GUILayout.VerticalScope(GUI.skin.box))
             {
                 ScreenMenuBox();
-
-                AchievementsBox();
+                if (!IsMinimized)
+                {
+                    ModOptionsBox();
+                    AchievementsBox();
+                }
             }
             GUI.DragWindow(new Rect(0f, 0f, 10000f, 10000f));
         }
@@ -180,7 +199,19 @@ namespace ModAchievements
         {
             using (var verScope = new GUILayout.VerticalScope(GUI.skin.box))
             {
-                LogLocalDebugInfoOption = GUILayout.Toggle(LogLocalDebugInfoOption, $"Log debug info?", GUI.skin.toggle);
+                GUI.contentColor = LocalDefaultColor;
+                if (IsModActiveForSingleplayer || IsModActiveForMultiplayer)
+                {
+                    if (GUILayout.Button("Toggle statistics info", GUI.skin.button))
+                    {
+                        ToggleDebugStatistics();
+                    }
+                }
+                else
+                {
+                    GUILayout.Label(OnlyInDebugModeMessage(), GUI.skin.label);
+                }
+
                 if (GUILayout.Button("Load achievements", GUI.skin.button))
                 {
                     OnClickLoadAchievementsButton();
@@ -195,6 +226,25 @@ namespace ModAchievements
             }
         }
 
+        private void ModOptionsBox()
+        {
+            using (var optionScope = new GUILayout.VerticalScope(GUI.skin.box))
+            {
+                if (IsModActiveForSingleplayer || IsModActiveForMultiplayer)
+                {
+                    GUI.color = Color.green;
+                    GUILayout.Label(PermissionChangedMessage($"granted"), GUI.skin.label);
+                }
+                else
+                {
+                    GUI.color = Color.yellow;
+                    PermissionChangedMessage($"revoked");
+                }
+                GUI.color = Color.white;
+                LogAchievementInfoOption = GUILayout.Toggle(LogAchievementInfoOption, $"Log achievement info?", GUI.skin.toggle);
+            }
+        }
+
         private void OnClickLoadAchievementsButton()
         {
             try
@@ -204,37 +254,37 @@ namespace ModAchievements
                     LocalAchievementsDebugData = LocalAchievementsManager.GetAchievementsDebugData();
                     if (LocalAchievementsDebugData != null && LocalAchievementsDebugData.Count > 0)
                     {
-                        LoadAchievementsData(LogLocalDebugInfoOption);
+                        LoadAchievementsData(LogAchievementInfoOption);
                     }
                 }
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{LocalModName}:{nameof(OnClickLoadAchievementsButton)}] throws exception:\n{exc.Message}");
+                ModAPI.Log.Write($"[{ModName}:{nameof(OnClickLoadAchievementsButton)}] throws exception:\n{exc.Message}");
             }
         }
 
-        private void LoadAchievementsData(bool logDebugInfo = false)
+        private void LoadAchievementsData(bool logInfo = false)
         {
             try
             {
                 LocalAchievementDataList.Clear();
                 LocalAchievementsInfoList.Clear();
-                DebugLogger.Clear();
+                AchievementInfoLogger.Clear();
 
                 if (LocalAchievementsDebugData == null || LocalAchievementsDebugData.Count == 0)
                 {
-                    if (logDebugInfo)
+                    if (logInfo)
                     {
-                        DebugLogger.AppendLine($"{nameof(LocalAchievementsDebugData)} not found!");
-                        ModAPI.Log.Write(DebugLogger.ToString());
+                        AchievementInfoLogger.AppendLine($"{nameof(LocalAchievementsDebugData)} not found!");
+                        ModAPI.Log.Write(AchievementInfoLogger.ToString());
                     }
                     return;
                 }
 
-                if (logDebugInfo)
+                if (logInfo)
                 {
-                    DebugLogger.AppendLine($"{nameof(AchievementInfo.AchievementID)}\t\t\t\t\t\t\t\t\t{nameof(AchievementInfo.AchievementTitle)}\t\t\t\t\t\t\t\t\t" +
+                    AchievementInfoLogger.AppendLine($"{nameof(AchievementInfo.AchievementID)}\t\t\t\t\t\t\t\t\t{nameof(AchievementInfo.AchievementTitle)}\t\t\t\t\t\t\t\t\t" +
                         $"{nameof(AchievementInfo.AchievementData.IsAchieved)}\t\t\t\t\t\t\t\t\t{nameof(AchievementInfo.AchievementIconFileUri)}");
                 }
 
@@ -255,32 +305,34 @@ namespace ModAchievements
                     }
                     LocalAchievementsInfoList.Add(achievementInfo);
 
-                    if (logDebugInfo)
+                    if (logInfo)
                     {
-                        DebugLogger.AppendLine($"{achievementInfo.AchievementID}\t\t\t\t\t\t\t\t\t{achievementInfo.AchievementTitle}\t\t\t\t\t\t\t\t\t" +
+                        AchievementInfoLogger.AppendLine($"{achievementInfo.AchievementID}\t\t\t\t\t\t\t\t\t{achievementInfo.AchievementTitle}\t\t\t\t\t\t\t\t\t" +
                                                                          $"{achievementInfo.AchievementData.IsAchieved()}\t\t\t\t\t\t\t\t\t{achievementInfo.AchievementIconFileUri}");
                     }
                 }
 
-                if (logDebugInfo)
+                if (logInfo)
                 {
-                    ModAPI.Log.Write(DebugLogger.ToString());
+                    ModAPI.Log.Write(AchievementInfoLogger.ToString());
                 }
 
                 AchievementDataLoaded = true;
             }
             catch (Exception exc)
             {
-                DebugLogger.AppendLine($"[{LocalModName}:{nameof(LoadAchievementsData)}({nameof(logDebugInfo)} = {logDebugInfo}] throws exception:\n{exc.Message}");
-                ModAPI.Log.Write(DebugLogger.ToString());
+                AchievementInfoLogger.AppendLine($"[{ModName}:{nameof(LoadAchievementsData)}({nameof(logInfo)} = {logInfo}] throws exception:\n{exc.Message}");
+                ModAPI.Log.Write(AchievementInfoLogger.ToString());
                 AchievementDataLoaded = false;
             }
         }
 
-        private static void ToggleMenuDebugAchievements()
+        private void ToggleDebugStatistics()
         {
             if (IsLocalMenuDebugAchievementsShown && LocalMenuDebugAchievements != null)
             {
+                LocalDebugMenuAchievementsScreen = default;
+
                 LocalMenuDebugAchievements.Hide();
                 IsLocalMenuDebugAchievementsShown = false;
             }
@@ -289,10 +341,27 @@ namespace ModAchievements
                 LocalMenuDebugAchievements = (MenuDebugAchievements)LocalMenuInGameManager.GetMenu(typeof(MenuDebugAchievements));
                 if (LocalMenuDebugAchievements != null)
                 {
-                    LocalMenuDebugAchievements.Show();
+                    ShowDebugMenuAchievements();
                     IsLocalMenuDebugAchievementsShown = true;
                 }
             }
+        }
+
+        private void ShowDebugMenuAchievements()
+        {
+            int wid = GetHashCode();
+            LocalDebugMenuAchievementsScreen = GUILayout.Window(wid, ModAchievementsScreen, InitDebugMenuAchievementsScreen, nameof(MenuDebugAchievements), GUI.skin.window,
+                                                                                                  GUILayout.ExpandWidth(true),
+                                                                                                  GUILayout.MinWidth(ModScreenMinWidth / 2f),
+                                                                                                  GUILayout.MaxWidth(ModScreenMaxWidth / 2f),
+                                                                                                  GUILayout.ExpandHeight(true),
+                                                                                                  GUILayout.MinHeight(ModScreenMinHeight / 2f),
+                                                                                                  GUILayout.MaxHeight(ModScreenMaxHeight / 2f));
+        }
+
+        private void InitDebugMenuAchievementsScreen(int id)
+        {
+            LocalMenuDebugAchievements.Show();
         }
 
         private void UnlockedAchievementsScrollView()
@@ -305,19 +374,6 @@ namespace ModAchievements
             }
 
             GUILayout.EndScrollView();
-
-            GUI.contentColor = DefaultColor;
-            if (IsModActiveForMultiplayer)
-            {
-                if (GUILayout.Button("Toggle debug menu", GUI.skin.button))
-                {
-                    ToggleMenuDebugAchievements();
-                }
-            }
-            else
-            {
-                GUILayout.Label(OnlyInDebugModeMessage(), GUI.skin.label);
-            }
         }
 
         private void LockedAchievementsScrollView()
@@ -349,7 +405,7 @@ namespace ModAchievements
 
                             if (!isAchieved)
                             {
-                                GUI.contentColor = DefaultColor;
+                                GUI.contentColor = LocalDefaultColor;
                                 if (GUILayout.Button("Unlock", GUI.skin.button))
                                 {
                                     SelectedAchievementData = localAchievementInfo.AchievementData;
@@ -363,7 +419,7 @@ namespace ModAchievements
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{LocalModName}:{nameof(GetAchievementInfo)}({nameof(isAchieved)}={isAchieved})] throws exception:\n{exc.Message}");
+                ModAPI.Log.Write($"[{ModName}:{nameof(GetAchievementInfo)}({nameof(isAchieved)}={isAchieved})] throws exception:\n{exc.Message}");
             }
         }
 
@@ -383,7 +439,7 @@ namespace ModAchievements
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{LocalModName}:{nameof(OnClickUnlockAchievementButton)}] throws exception:\n{exc.Message}");
+                ModAPI.Log.Write($"[{ModName}:{nameof(OnClickUnlockAchievementButton)}] throws exception:\n{exc.Message}");
             }
         }
 
@@ -400,17 +456,37 @@ namespace ModAchievements
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{LocalModName}:{nameof(GetAchievementInfo)}({nameof(isAchieved)}={isAchieved})] throws exception:\n{exc.Message}");
+                ModAPI.Log.Write($"[{ModName}:{nameof(GetAchievementInfo)}({nameof(isAchieved)}={isAchieved})] throws exception:\n{exc.Message}");
                 return achievementInfoArray;
             }
         }
 
         private void ScreenMenuBox()
         {
-            if (GUI.Button(new Rect(ModModAchievementsScreen.width - 20f, 0f, 20f, 20f), "X", GUI.skin.button))
+            if (GUI.Button(new Rect(ModAchievementsScreen.width - 40f, 0f, 20f, 20f), "-", GUI.skin.button))
+            {
+                CollapseWindow();
+            }
+
+            if (GUI.Button(new Rect(ModAchievementsScreen.width - 20f, 0f, 20f, 20f), "X", GUI.skin.button))
             {
                 CloseWindow();
             }
+        }
+
+        private void CollapseWindow()
+        {
+            if (!IsMinimized)
+            {
+                ModAchievementsScreen = new Rect(ModScreenStartPositionX, ModScreenStartPositionY, ModScreenTotalWidth, ModScreenMinHeight);
+                IsMinimized = true;
+            }
+            else
+            {
+                ModAchievementsScreen = new Rect(ModScreenStartPositionX, ModScreenStartPositionY, ModScreenTotalWidth, ModScreenTotalHeight);
+                IsMinimized = false;
+            }
+            InitWindow();
         }
 
         private void CloseWindow()

@@ -258,9 +258,9 @@ namespace ModAchievements
         {
             if (IsModActiveForSingleplayer || IsModActiveForMultiplayer)
             {
-                GUI.contentColor = DefaultGuiColor;
                 using (var optionsScope = new GUILayout.VerticalScope(GUI.skin.box))
                 {
+                    GUI.color = DefaultGuiColor;
                     GUILayout.Label($"Press [Toggle stats] to toggle your achievements screen showing more statistical info: ", GUI.skin.label);
                     if (GUILayout.Button("Toggle stats", GUI.skin.button))
                     {
@@ -293,7 +293,6 @@ namespace ModAchievements
                 using (var optionsScope = new GUILayout.VerticalScope(GUI.skin.box))
                 {
                     GUILayout.Label($"To toggle the main mod UI, press [{ModKeybindingId}]", GUI.skin.label);
-
                     MultiplayerOptionBox();
                 }
             }
@@ -441,7 +440,6 @@ namespace ModAchievements
         {
             if (IsLocalMenuDebugAchievementsShown && LocalMenuDebugAchievements != null)
             {
-                //LocalDebugMenuAchievementsScreen = default;
                 LocalMenuDebugAchievements.Hide();
                 IsLocalMenuDebugAchievementsShown = false;
             }
@@ -450,7 +448,6 @@ namespace ModAchievements
                 LocalMenuDebugAchievements = (MenuDebugAchievements)LocalMenuInGameManager.GetMenu(typeof(MenuDebugAchievements));
                 if (LocalMenuDebugAchievements != null)
                 {
-                    //ShowDebugMenuAchievements();
                     LocalMenuDebugAchievements.Show();
                     IsLocalMenuDebugAchievementsShown = true;
                 }
@@ -495,15 +492,12 @@ namespace ModAchievements
                         using (var horScope = new GUILayout.HorizontalScope(GUI.skin.box))
                         {
                             GUILayout.Label(content, GUI.skin.label);
-
                             if (!isAchieved)
                             {
-                                GUI.contentColor = DefaultGuiColor;
                                 if (GUILayout.Button("Unlock", GUI.skin.button))
                                 {
                                     SelectedAchievementData = localAchievementInfo.AchievementData;
                                     OnClickUnlockAchievementButton();
-                                    CloseWindow();
                                 }
                             }
                         }

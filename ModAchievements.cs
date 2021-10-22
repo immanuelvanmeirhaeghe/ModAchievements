@@ -1,38 +1,43 @@
-﻿using System;
+﻿using ModAchievements.Enums;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ModAchievements
 {
     /// <summary>
-    /// ModAchievements is a mod for Green Hell, that allows a player to manage Steam achievements.
-    /// Enable the mod UI by pressing Home.
+    /// ModAchievements is a mod for Green Hell that allows a player to manage Steam achievements.
+    /// Press Alpha9 (default) or the key configurable in ModAPI to open the mod screen.
     /// </summary>
     public class ModAchievements : MonoBehaviour
     {
         private static readonly string ModName = nameof(ModAchievements);
         private static readonly StringBuilder AchievementInfoLogger = new StringBuilder($"{ModName} debug info");
-        private static readonly float ModScreenTotalWidth = 500f;
-        private static readonly float ModScreenTotalHeight = 150f;
-        private static readonly float ModScreenMinWidth = 450f;
-        private static readonly float ModScreenMaxWidth = 550f;
+        private static readonly float ModScreenTotalWidth = 850f;
+        private static readonly float ModScreenTotalHeight = 500f;
+        private static readonly float ModScreenMinWidth = 800f;
+        private static readonly float ModScreenMaxWidth = 850f;
         private static readonly float ModScreenMinHeight = 50f;
-        private static readonly float ModScreenMaxHeight = 200f;
+        private static readonly float ModScreenMaxHeight = 550f;
 
         private static ModAchievements Instance;
         private static HUDManager LocalHUDManager;
         private static MenuInGameManager LocalMenuInGameManager;
         private static AchievementsManager LocalAchievementsManager;
         private static Player LocalPlayer;
+        private static CursorManager LocalCursorManager;
         private static MenuDebugAchievements LocalMenuDebugAchievements;
-        private static Color LocalDefaultColor;
 
-        private static float ModScreenStartPositionX { get; set; } = (Screen.width - ModScreenMaxWidth) % ModScreenTotalWidth;
-        private static float ModScreenStartPositionY { get; set; } = (Screen.height - ModScreenMaxHeight) % ModScreenTotalHeight;
+        private static float ModScreenStartPositionX { get; set; } = Screen.width / 2f;
+        private static float ModScreenStartPositionY { get; set; } = Screen.height / 2f;
         private static bool IsMinimized { get; set; } = false;
-        private bool ShowModUI = false;
+        private Color DefaultGuiColor = GUI.contentColor;
+        private bool ShowUI = false;
 
         public bool IsModActiveForMultiplayer { get; private set; } = false;
         public bool IsModActiveForSingleplayer => ReplTools.AmIMaster();
@@ -51,66 +56,113 @@ namespace ModAchievements
         public static List<AchievementData> LocalAchievementDataList = new List<AchievementData>();
         public static List<AchievementInfo> LocalAchievementsInfoList = new List<AchievementInfo>();
 
+        public ModAchievements()
+        {
+            useGUILayout = true;
+            Instance = this;
+        }
+        public static ModAchievements Get()
+        {
+            return Instance;
+        }
+
         public static string HUDBigInfoMessage(string message)
             => $"<color=#{ColorUtility.ToHtmlStringRGBA(Color.cyan)}>System</color>\n{message}";
-        public static string OnlyInDebugModeMessage()
-           => $"Only available in debug mode.\nHost can activate using ModManager. or DebugMode";
-        public static string PermissionChangedMessage(string message)
-            => $"Permission to use mods and cheats in multiplayer was {message}";
+        public static string OnlyForSinglePlayerOrHostMessage()
+                    => $"Only available for single player or when host. Host can activate using ModManager.";
+        public static string PermissionChangedMessage(string permission, string reason)
+            => $"Permission to use mods and cheats in multiplayer was {permission} because {reason}.";
+        public static string HUDBigInfoMessage(string message, MessageType messageType, Color? headcolor = null)
+            => $"<color=#{ (headcolor != null ? ColorUtility.ToHtmlStringRGBA(headcolor.Value) : ColorUtility.ToHtmlStringRGBA(Color.red))  }>{messageType}</color>\n{message}";
+        private static readonly string RuntimeConfigurationFile = Path.Combine(Application.dataPath.Replace("GH_Data", "Mods"), "RuntimeConfiguration.xml");
+        private static KeyCode ModKeybindingId { get; set; } = KeyCode.Alpha9;
+        private static KeyCode ModDeleteKeybindingId { get; set; } = KeyCode.Delete;
+        private KeyCode GetConfigurableKey(string buttonId)
+        {
+            KeyCode configuredKeyCode = default;
+            string configuredKeybinding = string.Empty;
 
+            try
+            {
+                if (File.Exists(RuntimeConfigurationFile))
+                {
+                    using (var xmlReader = XmlReader.Create(new StreamReader(RuntimeConfigurationFile)))
+                    {
+                        while (xmlReader.Read())
+                        {
+                            if (xmlReader["ID"] == ModName)
+                            {
+                                if (xmlReader.ReadToFollowing(nameof(Button)) && xmlReader["ID"] == buttonId)
+                                {
+                                    configuredKeybinding = xmlReader.ReadElementContentAsString();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                configuredKeybinding = configuredKeybinding?.Replace("NumPad", "Keypad").Replace("Oem", "");
+
+                configuredKeyCode = (KeyCode)(!string.IsNullOrEmpty(configuredKeybinding)
+                                                            ? Enum.Parse(typeof(KeyCode), configuredKeybinding)
+                                                            : GetType().GetProperty(buttonId)?.GetValue(this));
+                return configuredKeyCode;
+            }
+            catch (Exception exc)
+            {
+                HandleException(exc, nameof(GetConfigurableKey));
+                configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
+                return configuredKeyCode;
+            }
+        }
+        private void HandleException(Exception exc, string methodName)
+        {
+            string info = $"[{ModName}:{methodName}] throws exception:\n{exc.Message}";
+            ModAPI.Log.Write(info);
+            ShowHUDBigInfo(HUDBigInfoMessage(info, MessageType.Error, Color.red));
+        }
         public void ShowHUDBigInfo(string text)
         {
             string header = $"{ModName} Info";
             string textureName = HUDInfoLogTextureType.Count.ToString();
-
-            HUDBigInfo bigInfo = (HUDBigInfo)LocalHUDManager.GetHUD(typeof(HUDBigInfo));
+            HUDBigInfo hudBigInfo = (HUDBigInfo)LocalHUDManager.GetHUD(typeof(HUDBigInfo));
             HUDBigInfoData.s_Duration = 2f;
-            HUDBigInfoData bigInfoData = new HUDBigInfoData
+            HUDBigInfoData hudBigInfoData = new HUDBigInfoData
             {
                 m_Header = header,
                 m_Text = text,
                 m_TextureName = textureName,
                 m_ShowTime = Time.time
             };
-            bigInfo.AddInfo(bigInfoData);
-            bigInfo.Show(true);
+            hudBigInfo.AddInfo(hudBigInfoData);
+            hudBigInfo.Show(true);
         }
-
+        public void ShowHUDInfoLog(string itemID, string localizedTextKey)
+        {
+            var localization = GreenHellGame.Instance.GetLocalization();
+            HUDMessages hUDMessages = (HUDMessages)LocalHUDManager.GetHUD(typeof(HUDMessages));
+            hUDMessages.AddMessage(
+                $"{localization.Get(localizedTextKey)}  {localization.Get(itemID)}"
+                );
+        }
         private void ToggleShowUI()
         {
-            ShowModUI = !ShowModUI;
+            ShowUI = !ShowUI;
         }
-
-        public void Start()
-        {
-            ModManager.ModManager.onPermissionValueChanged += ModManager_onPermissionValueChanged;
-            LocalDefaultColor = GUI.contentColor;
-        }
-
         private void ModManager_onPermissionValueChanged(bool optionValue)
         {
+            string reason = optionValue ? "the game host allowed usage" : "the game host did not allow usage";
             IsModActiveForMultiplayer = optionValue;
+
             ShowHUDBigInfo(
                           (optionValue ?
-                            HUDBigInfoMessage(PermissionChangedMessage($"<color=#{ColorUtility.ToHtmlStringRGBA(Color.green)}>granted!</color>"))
-                            : HUDBigInfoMessage(PermissionChangedMessage($"<color=#{ColorUtility.ToHtmlStringRGBA(Color.yellow)}>revoked!</color>")))
+                            HUDBigInfoMessage(PermissionChangedMessage($"granted", $"{reason}"), MessageType.Info, Color.green)
+                            : HUDBigInfoMessage(PermissionChangedMessage($"revoked", $"{reason}"), MessageType.Info, Color.yellow))
                             );
         }
-
-        public ModAchievements()
-        {
-            useGUILayout = true;
-            Instance = this;
-        }
-
-        public static ModAchievements Get()
-        {
-            return Instance;
-        }
-
         private void EnableCursor(bool blockPlayer = false)
         {
-            CursorManager.Get().ShowCursor(blockPlayer, false);
+            LocalCursorManager.ShowCursor(blockPlayer, false);
 
             if (blockPlayer)
             {
@@ -126,17 +178,23 @@ namespace ModAchievements
             }
         }
 
+        public void Start()
+        {
+            ModManager.ModManager.onPermissionValueChanged += ModManager_onPermissionValueChanged;
+            ModKeybindingId = GetConfigurableKey(nameof(ModKeybindingId));
+        }
+
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Home))
+            if (Input.GetKeyDown(ModKeybindingId))
             {
-                if (!ShowModUI)
+                if (!ShowUI)
                 {
                     InitData();
                     EnableCursor(true);
                 }
                 ToggleShowUI();
-                if (!ShowModUI)
+                if (!ShowUI)
                 {
                     EnableCursor(false);
                 }
@@ -145,7 +203,7 @@ namespace ModAchievements
 
         private void OnGUI()
         {
-            if (ShowModUI)
+            if (ShowUI)
             {
                 InitData();
                 InitSkinUI();
@@ -171,6 +229,7 @@ namespace ModAchievements
             LocalPlayer = Player.Get();
             LocalMenuInGameManager = MenuInGameManager.Get();
             LocalAchievementsManager = AchievementsManager.Get();
+            LocalCursorManager = CursorManager.Get();
         }
 
         private void InitSkinUI()
@@ -197,51 +256,101 @@ namespace ModAchievements
 
         private void AchievementsBox()
         {
-            using (var verScope = new GUILayout.VerticalScope(GUI.skin.box))
+            if (IsModActiveForSingleplayer || IsModActiveForMultiplayer)
             {
-                GUI.contentColor = LocalDefaultColor;
-                if (IsModActiveForSingleplayer || IsModActiveForMultiplayer)
+                GUI.contentColor = DefaultGuiColor;
+                using (var optionsScope = new GUILayout.VerticalScope(GUI.skin.box))
                 {
-                    if (GUILayout.Button("Toggle statistics info", GUI.skin.button))
+                    GUILayout.Label($"Press [Toggle stats] to toggle your achievements screen showing more statistical info: ", GUI.skin.label);
+                    if (GUILayout.Button("Toggle stats", GUI.skin.button))
                     {
                         ToggleDebugStatistics();
                     }
-                }
-                else
-                {
-                    GUILayout.Label(OnlyInDebugModeMessage(), GUI.skin.label);
-                }
 
-                if (GUILayout.Button("Load achievements", GUI.skin.button))
-                {
-                    OnClickLoadAchievementsButton();
-                }
+                    GUILayout.Label($"Press [Load achievements] to show your current achievement and status colorcoded: ", GUI.skin.label);
+                    if (GUILayout.Button("Load achievements", GUI.skin.button))
+                    {
+                        OnClickLoadAchievementsButton();
+                    }
+                    if (AchievementDataLoaded)
+                    {
+                        UnlockedAchievementsScrollView();
 
-                if (AchievementDataLoaded)
-                {
-                    UnlockedAchievementsScrollView();
-
-                    LockedAchievementsScrollView();
+                        LockedAchievementsScrollView();
+                    }
                 }
+            }
+            else
+            {
+                OnlyForSingleplayerOrWhenHostBox();
             }
         }
 
         private void ModOptionsBox()
         {
-            using (var optionScope = new GUILayout.VerticalScope(GUI.skin.box))
+            if (IsModActiveForSingleplayer || IsModActiveForMultiplayer)
             {
-                if (IsModActiveForSingleplayer || IsModActiveForMultiplayer)
+                using (var optionsScope = new GUILayout.VerticalScope(GUI.skin.box))
                 {
-                    GUI.color = Color.green;
-                    GUILayout.Label(PermissionChangedMessage($"granted"), GUI.skin.label);
+                    GUILayout.Label($"To toggle the main mod UI, press [{ModKeybindingId}]", GUI.skin.label);
+
+                    MultiplayerOptionBox();
                 }
-                else
+            }
+            else
+            {
+                OnlyForSingleplayerOrWhenHostBox();
+            }
+        }
+
+        private void OnlyForSingleplayerOrWhenHostBox()
+        {
+            using (var infoScope = new GUILayout.HorizontalScope(GUI.skin.box))
+            {
+                GUI.color = Color.yellow;
+                GUILayout.Label(OnlyForSinglePlayerOrHostMessage(), GUI.skin.label);
+            }
+        }
+
+        private void MultiplayerOptionBox()
+        {
+            try
+            {
+                using (var multiplayeroptionsScope = new GUILayout.VerticalScope(GUI.skin.box))
                 {
-                    GUI.color = Color.yellow;
-                    PermissionChangedMessage($"revoked");
+                    GUILayout.Label("Multiplayer options: ", GUI.skin.label);
+                    string multiplayerOptionMessage = string.Empty;
+                    if (IsModActiveForSingleplayer || IsModActiveForMultiplayer)
+                    {
+                        GUI.color = Color.green;
+                        if (IsModActiveForSingleplayer)
+                        {
+                            multiplayerOptionMessage = $"you are the game host";
+                        }
+                        if (IsModActiveForMultiplayer)
+                        {
+                            multiplayerOptionMessage = $"the game host allowed usage";
+                        }
+                        _ = GUILayout.Toggle(true, PermissionChangedMessage($"granted", multiplayerOptionMessage), GUI.skin.toggle);
+                    }
+                    else
+                    {
+                        GUI.color = Color.yellow;
+                        if (!IsModActiveForSingleplayer)
+                        {
+                            multiplayerOptionMessage = $"you are not the game host";
+                        }
+                        if (!IsModActiveForMultiplayer)
+                        {
+                            multiplayerOptionMessage = $"the game host did not allow usage";
+                        }
+                        _ = GUILayout.Toggle(false, PermissionChangedMessage($"revoked", $"{multiplayerOptionMessage}"), GUI.skin.toggle);
+                    }
                 }
-                GUI.color = Color.white;
-                LogAchievementInfoOption = GUILayout.Toggle(LogAchievementInfoOption, $"Log achievement info?", GUI.skin.toggle);
+            }
+            catch (Exception exc)
+            {
+                HandleException(exc, nameof(MultiplayerOptionBox));
             }
         }
 
@@ -260,7 +369,7 @@ namespace ModAchievements
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{ModName}:{nameof(OnClickLoadAchievementsButton)}] throws exception:\n{exc.Message}");
+                HandleException(exc, nameof(OnClickLoadAchievementsButton));
             }
         }
 
@@ -324,6 +433,7 @@ namespace ModAchievements
                 AchievementInfoLogger.AppendLine($"[{ModName}:{nameof(LoadAchievementsData)}({nameof(logInfo)} = {logInfo}] throws exception:\n{exc.Message}");
                 ModAPI.Log.Write(AchievementInfoLogger.ToString());
                 AchievementDataLoaded = false;
+                HandleException(exc, nameof(LoadAchievementsData));
             }
         }
 
@@ -346,27 +456,6 @@ namespace ModAchievements
                 }
             }
         }
-
-        //private void ShowDebugMenuAchievements()
-        //{
-        //    int wid = GetHashCode();
-        //    LocalDebugMenuAchievementsScreen = GUILayout.Window(wid, ModAchievementsScreen, InitDebugMenuAchievementsScreen, nameof(MenuDebugAchievements), GUI.skin.window,
-        //                                                                                          GUILayout.ExpandWidth(true),
-        //                                                                                          GUILayout.MinWidth(ModScreenMinWidth / 2f),
-        //                                                                                          GUILayout.MaxWidth(ModScreenMaxWidth / 2f),
-        //                                                                                          GUILayout.ExpandHeight(true),
-        //                                                                                          GUILayout.MinHeight(ModScreenMinHeight / 2f),
-        //                                                                                          GUILayout.MaxHeight(ModScreenMaxHeight / 2f));
-        //}
-
-        //private void InitDebugMenuAchievementsScreen(int id)
-        //{
-        //    using (var debugMenuContentScope = new GUILayout.VerticalScope(GUI.skin.box))
-        //    {
-
-        //    }
-        //    GUI.DragWindow(new Rect(0f, 0f, 10000f, 10000f));
-        //}
 
         private void UnlockedAchievementsScrollView()
         {
@@ -409,7 +498,7 @@ namespace ModAchievements
 
                             if (!isAchieved)
                             {
-                                GUI.contentColor = LocalDefaultColor;
+                                GUI.contentColor = DefaultGuiColor;
                                 if (GUILayout.Button("Unlock", GUI.skin.button))
                                 {
                                     SelectedAchievementData = localAchievementInfo.AchievementData;
@@ -423,7 +512,7 @@ namespace ModAchievements
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{ModName}:{nameof(GetAchievementInfo)}({nameof(isAchieved)}={isAchieved})] throws exception:\n{exc.Message}");
+                HandleException(exc, nameof(AddAchievementInfoLabels));
             }
         }
 
@@ -443,7 +532,7 @@ namespace ModAchievements
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{ModName}:{nameof(OnClickUnlockAchievementButton)}] throws exception:\n{exc.Message}");
+                HandleException(exc, nameof(OnClickUnlockAchievementButton));
             }
         }
 
@@ -460,7 +549,7 @@ namespace ModAchievements
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write($"[{ModName}:{nameof(GetAchievementInfo)}({nameof(isAchieved)}={isAchieved})] throws exception:\n{exc.Message}");
+                HandleException(exc, nameof(GetAchievementInfo));
                 return achievementInfoArray;
             }
         }
@@ -495,7 +584,7 @@ namespace ModAchievements
 
         private void CloseWindow()
         {
-            ShowModUI = false;
+            ShowUI = false;
             EnableCursor(false);
         }
     }

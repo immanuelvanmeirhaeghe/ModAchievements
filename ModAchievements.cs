@@ -37,7 +37,7 @@ namespace ModAchievements
         private static float ModScreenStartPositionY { get; set; } = Screen.height / 2f;
         private static bool IsMinimized { get; set; } = false;
         private Color DefaultGuiColor = GUI.contentColor;
-        private bool ShowUI = false;
+        private bool ShowModUI = false;
 
         public bool IsModActiveForMultiplayer { get; private set; } = false;
         public bool IsModActiveForSingleplayer => ReplTools.AmIMaster();
@@ -56,9 +56,63 @@ namespace ModAchievements
         public static List<AchievementData> LocalAchievementDataList = new List<AchievementData>();
         public static List<AchievementInfo> LocalAchievementsInfoList = new List<AchievementInfo>();
 
+        private static readonly string RuntimeConfiguration = Path.Combine(Application.dataPath.Replace("GH_Data", "Mods"), $"{nameof(RuntimeConfiguration)}.xml");
+        private static KeyCode ModKeybindingId { get; set; } = KeyCode.Alpha9;
+        private KeyCode GetConfigurableKey(string buttonId)
+        {
+            KeyCode configuredKeyCode = default;
+            string configuredKeybinding = string.Empty;
+            try
+            {
+                if (File.Exists(RuntimeConfiguration))
+                {
+                    using (var xmlReader = XmlReader.Create(RuntimeConfiguration))
+                    {
+                        xmlReader.MoveToContent();
+                        while (xmlReader.Read())
+                        {
+                            if (xmlReader.HasAttributes && xmlReader["ID"] == ModName)
+                            {
+                                while (xmlReader.ReadToDescendant(nameof(Button)))
+                                {
+                                    if (xmlReader.HasAttributes && xmlReader["ID"] == buttonId)
+                                    {
+                                        configuredKeybinding = xmlReader.ReadElementContentAsString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(configuredKeybinding))
+                    {
+                        configuredKeyCode = EnumUtils<KeyCode>.GetValue(configuredKeybinding);
+                    }
+                    else
+                    {
+                        configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
+                    }
+                }
+                else
+                {
+                    ShowHUDBigInfo($"{RuntimeConfiguration} was not found! Reverting to default keybindings.");
+                    configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
+                }
+                ShowHUDBigInfo($"Mod keybinding set to {configuredKeyCode}.");
+                return configuredKeyCode;
+            }
+            catch (Exception exc)
+            {
+                HandleException(exc, nameof(GetConfigurableKey));
+                configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
+                return configuredKeyCode;
+            }
+        }
+
         public ModAchievements()
         {
             useGUILayout = true;
+            ModKeybindingId = GetConfigurableKey(nameof(ModKeybindingId));
             Instance = this;
         }
         public static ModAchievements Get()
@@ -74,47 +128,7 @@ namespace ModAchievements
             => $"Permission to use mods and cheats in multiplayer was {permission} because {reason}.";
         public static string HUDBigInfoMessage(string message, MessageType messageType, Color? headcolor = null)
             => $"<color=#{ (headcolor != null ? ColorUtility.ToHtmlStringRGBA(headcolor.Value) : ColorUtility.ToHtmlStringRGBA(Color.red))  }>{messageType}</color>\n{message}";
-        private static readonly string RuntimeConfigurationFile = Path.Combine(Application.dataPath.Replace("GH_Data", "Mods"), "RuntimeConfiguration.xml");
-        private static KeyCode ModKeybindingId { get; set; } = KeyCode.Alpha9;
-        private static KeyCode ModDeleteKeybindingId { get; set; } = KeyCode.Delete;
-        private KeyCode GetConfigurableKey(string buttonId)
-        {
-            KeyCode configuredKeyCode = default;
-            string configuredKeybinding = string.Empty;
 
-            try
-            {
-                if (File.Exists(RuntimeConfigurationFile))
-                {
-                    using (var xmlReader = XmlReader.Create(new StreamReader(RuntimeConfigurationFile)))
-                    {
-                        while (xmlReader.Read())
-                        {
-                            if (xmlReader["ID"] == ModName)
-                            {
-                                if (xmlReader.ReadToFollowing(nameof(Button)) && xmlReader["ID"] == buttonId)
-                                {
-                                    configuredKeybinding = xmlReader.ReadElementContentAsString();
-                                }
-                            }
-                        }
-                    }
-                }
-
-                configuredKeybinding = configuredKeybinding?.Replace("NumPad", "Keypad").Replace("Oem", "");
-
-                configuredKeyCode = (KeyCode)(!string.IsNullOrEmpty(configuredKeybinding)
-                                                            ? Enum.Parse(typeof(KeyCode), configuredKeybinding)
-                                                            : GetType().GetProperty(buttonId)?.GetValue(this));
-                return configuredKeyCode;
-            }
-            catch (Exception exc)
-            {
-                HandleException(exc, nameof(GetConfigurableKey));
-                configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
-                return configuredKeyCode;
-            }
-        }
         private void HandleException(Exception exc, string methodName)
         {
             string info = $"[{ModName}:{methodName}] throws exception:\n{exc.Message}";
@@ -147,7 +161,7 @@ namespace ModAchievements
         }
         private void ToggleShowUI()
         {
-            ShowUI = !ShowUI;
+            ShowModUI = !ShowModUI;
         }
         private void ModManager_onPermissionValueChanged(bool optionValue)
         {
@@ -181,20 +195,19 @@ namespace ModAchievements
         public void Start()
         {
             ModManager.ModManager.onPermissionValueChanged += ModManager_onPermissionValueChanged;
-            ModKeybindingId = GetConfigurableKey(nameof(ModKeybindingId));
         }
 
         private void Update()
         {
             if (Input.GetKeyDown(ModKeybindingId))
             {
-                if (!ShowUI)
+                if (!ShowModUI)
                 {
                     InitData();
                     EnableCursor(true);
                 }
                 ToggleShowUI();
-                if (!ShowUI)
+                if (!ShowModUI)
                 {
                     EnableCursor(false);
                 }
@@ -203,7 +216,7 @@ namespace ModAchievements
 
         private void OnGUI()
         {
-            if (ShowUI)
+            if (ShowModUI)
             {
                 InitData();
                 InitSkinUI();
@@ -578,7 +591,7 @@ namespace ModAchievements
 
         private void CloseWindow()
         {
-            ShowUI = false;
+            ShowModUI = false;
             EnableCursor(false);
         }
     }

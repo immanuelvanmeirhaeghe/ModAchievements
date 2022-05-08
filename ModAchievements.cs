@@ -117,7 +117,7 @@ namespace ModAchievements
         public ModAchievements()
         {
             useGUILayout = true;
-            ModKeybindingId = GetConfigurableKey(nameof(ModKeybindingId));
+            ModKeybindingId = KeyCode.Alpha9;
             Instance = this;
         }
         public static ModAchievements Get()
@@ -200,6 +200,7 @@ namespace ModAchievements
         public void Start()
         {
             ModManager.ModManager.onPermissionValueChanged += ModManager_onPermissionValueChanged;
+            ModKeybindingId = GetConfigurableKey(nameof(ModKeybindingId));
         }
 
         private void Update()

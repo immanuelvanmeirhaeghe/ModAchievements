@@ -60,10 +60,11 @@ namespace ModAchievements
         private static KeyCode ModKeybindingId { get; set; } = KeyCode.Alpha9;
         private KeyCode GetConfigurableKey(string buttonId)
         {
-            KeyCode configuredKeyCode = default;
-            string configuredKeybinding = string.Empty;
+            KeyCode configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
+            string configuredKeybinding = EnumUtils<KeyCode>.GetName(configuredKeyCode);
             try
             {
+                ModAPI.Log.Write($"Using {RuntimeConfiguration}");
                 if (File.Exists(RuntimeConfiguration))
                 {
                     using (var xmlReader = XmlReader.Create(RuntimeConfiguration))
@@ -91,19 +92,23 @@ namespace ModAchievements
                     else
                     {
                         configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
+                        ModAPI.Log.Write($"{configuredKeybinding} was not found! Reverting to default {configuredKeyCode}.");
                     }
                 }
                 else
                 {
-                    ShowHUDBigInfo($"{RuntimeConfiguration} was not found! Reverting to default keybindings.");
+                    ModAPI.Log.Write($"{RuntimeConfiguration} could not be found! Reverting to default keybindings.");
                     configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
                 }
-                ShowHUDBigInfo($"Mod keybinding set to {configuredKeyCode}.");
+
+                ModAPI.Log.Write(nameof(configuredKeybinding) + $" set to {configuredKeybinding}");
+                ModAPI.Log.Write(nameof(configuredKeyCode) + $" set to {configuredKeyCode}");
+
                 return configuredKeyCode;
             }
             catch (Exception exc)
             {
-                HandleException(exc, nameof(GetConfigurableKey));
+                ModAPI.Log.Write(exc);
                 configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
                 return configuredKeyCode;
             }

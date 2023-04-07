@@ -406,10 +406,12 @@ namespace ModAchievements
 
                 if (LocalAchievementsDebugData == null || LocalAchievementsDebugData.Count == 0)
                 {
+                    AchievementDataLoaded = false;
+
                     if (logInfo)
                     {
-                        AchievementInfoLogger.AppendLine($"{nameof(LocalAchievementsDebugData)} not found!");
-                        ModAPI.Log.Write(AchievementInfoLogger.ToString());
+                        AchievementInfoLogger.AppendLine($"\n{nameof(LocalAchievementsDebugData)} not found!");
+                        ModAPI.Log.Write(AchievementInfoLogger.ToString());                      
                     }
                     return;
                 }
@@ -487,7 +489,7 @@ namespace ModAchievements
 
             if (LocalAchievementsInfoList != null && LocalAchievementsInfoList.Count > 0)
             {
-                AddAchievementInfoLabels(true);
+                AddAchievementInfoLabels();
             }
 
             GUILayout.EndScrollView();
@@ -499,37 +501,34 @@ namespace ModAchievements
 
             if (LocalAchievementsInfoList != null && LocalAchievementsInfoList.Count > 0)
             {
-                AddAchievementInfoLabels(false);
+                AddAchievementInfoLabels();
             }
 
             GUILayout.EndScrollView();
         }
 
-        private void AddAchievementInfoLabels(bool isAchieved)
+        private void AddAchievementInfoLabels()
         {
             try
             {
-                var localAchievementsInfoList = GetAchievementInfo(isAchieved);
-                if (localAchievementsInfoList != null && localAchievementsInfoList.Count() > 0)
+                foreach (AchievementInfo localAchievementInfo in LocalAchievementsInfoList)
                 {
-                    foreach (AchievementInfo localAchievementInfo in localAchievementsInfoList)
+                    GUI.contentColor = localAchievementInfo.AchievementData.IsAchieved() ? Color.green : Color.red;
+                    GUIContent content = new GUIContent(localAchievementInfo.AchievementTitle, localAchievementInfo.AchievementIconTexture, localAchievementInfo.AchievementDescription);
+                    using (var horScope = new GUILayout.HorizontalScope(GUI.skin.box))
                     {
-                        GUI.contentColor = isAchieved ? Color.green : Color.red;
-                        GUIContent content = new GUIContent(localAchievementInfo.AchievementTitle, localAchievementInfo.AchievementIconTexture, localAchievementInfo.AchievementDescription);
-                        using (var horScope = new GUILayout.HorizontalScope(GUI.skin.box))
+                        GUILayout.Label(content, GUI.skin.label);
+                        if (!localAchievementInfo.AchievementData.IsAchieved())
                         {
-                            GUILayout.Label(content, GUI.skin.label);
-                            if (!isAchieved)
+                            if (GUILayout.Button("Unlock", GUI.skin.button))
                             {
-                                if (GUILayout.Button("Unlock", GUI.skin.button))
-                                {
-                                    SelectedAchievementData = localAchievementInfo.AchievementData;
-                                    OnClickUnlockAchievementButton();
-                                }
+                                SelectedAchievementData = localAchievementInfo.AchievementData;
+                                OnClickUnlockAchievementButton();
                             }
                         }
                     }
                 }
+
             }
             catch (Exception exc)
             {
@@ -554,24 +553,6 @@ namespace ModAchievements
             catch (Exception exc)
             {
                 HandleException(exc, nameof(OnClickUnlockAchievementButton));
-            }
-        }
-
-        private AchievementInfo[] GetAchievementInfo(bool isAchieved)
-        {
-            AchievementInfo[] achievementInfoArray = default;
-            try
-            {
-                if (LocalAchievementsInfoList != null && LocalAchievementsInfoList.Count > 0)
-                {
-                    achievementInfoArray = LocalAchievementsInfoList.Where(achievementInfo => achievementInfo.AchievementData.IsAchieved() == isAchieved)?.ToArray();
-                }
-                return achievementInfoArray;
-            }
-            catch (Exception exc)
-            {
-                HandleException(exc, nameof(GetAchievementInfo));
-                return achievementInfoArray;
             }
         }
 

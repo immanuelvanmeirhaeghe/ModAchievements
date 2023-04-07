@@ -54,8 +54,7 @@ namespace ModAchievements
         public static AchievementData SelectedAchievementData;
         public static List<string> LocalAchievementsDebugData = new List<string>();
         public static List<AchievementData> LocalAchievementDataList = new List<AchievementData>();
-        public static List<AchievementInfo> LocalAchievementsInfoList = new List<AchievementInfo>();
-
+       
         private static readonly string RuntimeConfiguration = Path.Combine(Application.dataPath.Replace("GH_Data", "Mods"), $"{nameof(RuntimeConfiguration)}.xml");
         private static KeyCode ModKeybindingId { get; set; } = KeyCode.Alpha9;
         private KeyCode GetConfigurableKey(string buttonId)
@@ -400,8 +399,7 @@ namespace ModAchievements
         {
             try
             {
-                LocalAchievementDataList.Clear();
-                LocalAchievementsInfoList.Clear();
+                LocalAchievementDataList.Clear();            
                 AchievementInfoLogger.Clear();
 
                 if (LocalAchievementsDebugData == null || LocalAchievementsDebugData.Count == 0)
@@ -418,12 +416,11 @@ namespace ModAchievements
 
                 if (logInfo)
                 {
-                    AchievementInfoLogger.AppendLine($"\n{nameof(AchievementInfo.AchievementID)}\t\t\t\t{nameof(AchievementInfo.AchievementTitle)}\t\t\t\t" +
-                        $"{nameof(AchievementInfo.AchievementData.IsAchieved)}\t\t\t\t{nameof(AchievementInfo.AchievementIconFileUri)}");
+                    AchievementInfoLogger.AppendLine($" \nApiName\t\t\t\tIsAchieved");
                 }
 
                 foreach (string achievementDebugData in LocalAchievementsDebugData)
-                {               
+                {
                     bool isAchieved = achievementDebugData.Contains("green");
                     string apiName = achievementDebugData.Split('>')[1]?.Split('<')[0];
 
@@ -432,22 +429,14 @@ namespace ModAchievements
                     {
                         achievementData.SetAchived(isAchieved);
                         LocalAchievementDataList.Add(achievementData);
-
-                        AchievementInfo achievementInfo = new AchievementInfo(apiName, achievementData);
-                        if (achievementInfo != null && achievementInfo.AchievementIconFileUri != null)
-                        {
-                            StartCoroutine(achievementInfo.StartGetTexture(achievementInfo.AchievementIconFileUri.ToString()));
-                            LocalAchievementsInfoList.Add(achievementInfo);
-                        }
-
+                        
                         if (logInfo)
                         {
-                            AchievementInfoLogger.AppendLine($"\n{achievementInfo.AchievementID}\t\t\t\t{achievementInfo.AchievementTitle}\t\t\t\t" +
-                                                                             $"{achievementInfo.AchievementData.IsAchieved()}\t\t\t\t{achievementInfo.AchievementIconFileUri}");
+                            AchievementInfoLogger.AppendLine($"\n{achievementData.GetApiName()}\t\t\t\t{achievementData.IsAchieved()}");
                         }
                     }
                 }
-
+                
                 if (logInfo)
                 {
                     ModAPI.Log.Write(AchievementInfoLogger.ToString());
@@ -487,7 +476,7 @@ namespace ModAchievements
         {
             UnlockedAchievementsScrollViewPosition = GUILayout.BeginScrollView(UnlockedAchievementsScrollViewPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
 
-            if (LocalAchievementsInfoList != null && LocalAchievementsInfoList.Count > 0)
+            if (LocalAchievementDataList != null && LocalAchievementDataList.Count > 0)
             {
                 AddAchievementInfoLabels();
             }
@@ -499,7 +488,7 @@ namespace ModAchievements
         {
             LockedAchievementsScrollViewPosition = GUILayout.BeginScrollView(LockedAchievementsScrollViewPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
 
-            if (LocalAchievementsInfoList != null && LocalAchievementsInfoList.Count > 0)
+            if (LocalAchievementDataList != null && LocalAchievementDataList.Count > 0)
             {
                 AddAchievementInfoLabels();
             }
@@ -511,18 +500,18 @@ namespace ModAchievements
         {
             try
             {
-                foreach (AchievementInfo localAchievementInfo in LocalAchievementsInfoList)
+                foreach (AchievementData localAchievementData in LocalAchievementDataList)
                 {
-                    GUI.contentColor = localAchievementInfo.AchievementData.IsAchieved() ? Color.green : Color.red;
-                    GUIContent content = new GUIContent(localAchievementInfo.AchievementTitle, localAchievementInfo.AchievementIconTexture, localAchievementInfo.AchievementDescription);
+                    GUI.contentColor = localAchievementData.IsAchieved() ? Color.green : Color.red;
+                    GUIContent content = new GUIContent(localAchievementData.GetApiName(), localAchievementData.IsAchieved().ToString());
                     using (var horScope = new GUILayout.HorizontalScope(GUI.skin.box))
                     {
                         GUILayout.Label(content, GUI.skin.label);
-                        if (!localAchievementInfo.AchievementData.IsAchieved())
+                        if (!localAchievementData.IsAchieved())
                         {
                             if (GUILayout.Button("Unlock", GUI.skin.button))
                             {
-                                SelectedAchievementData = localAchievementInfo.AchievementData;
+                                SelectedAchievementData = localAchievementData;
                                 OnClickUnlockAchievementButton();
                             }
                         }

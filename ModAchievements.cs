@@ -416,8 +416,8 @@ namespace ModAchievements
 
                 if (logInfo)
                 {
-                    AchievementInfoLogger.AppendLine($"\n{nameof(AchievementInfo.AchievementID)}\t\t\t\t\t\t{nameof(AchievementInfo.AchievementTitle)}\t\t\t\t\t\t" +
-                        $"{nameof(AchievementInfo.AchievementData.IsAchieved)}\t\t\t\t\t\t{nameof(AchievementInfo.AchievementIconFileUri)}");
+                    AchievementInfoLogger.AppendLine($"\n{nameof(AchievementInfo.AchievementID)}\t\t\t\t{nameof(AchievementInfo.AchievementTitle)}\t\t\t\t" +
+                        $"{nameof(AchievementInfo.AchievementData.IsAchieved)}\t\t\t\t{nameof(AchievementInfo.AchievementIconFileUri)}");
                 }
 
                 foreach (string achievementDebugData in LocalAchievementsDebugData)
@@ -426,20 +426,23 @@ namespace ModAchievements
                     string apiName = achievementDebugData.Split('>')[1]?.Split('<')[0];
 
                     AchievementData achievementData = new AchievementData(apiName);
-                    achievementData.SetAchived(isAchieved);
-                    LocalAchievementDataList.Add(achievementData);
-
-                    AchievementInfo achievementInfo = new AchievementInfo(apiName, achievementData);
-                    if (achievementInfo != null && achievementInfo.AchievementIconFileUri != null)
-                    {                     
-                        StartCoroutine(achievementInfo.StartGetTexture(achievementInfo.AchievementIconFileUri.ToString()));
-                        LocalAchievementsInfoList.Add(achievementInfo);
-                    }
-
-                    if (logInfo)
+                    if (achievementData != null)
                     {
-                        AchievementInfoLogger.AppendLine($"\n{achievementInfo.AchievementID}\t\t\t\t\t\t{achievementInfo.AchievementTitle}\t\t\t\t\t\t" +
-                                                                         $"{achievementInfo.AchievementData.IsAchieved()}\t\t\t\t\t\t{achievementInfo.AchievementIconFileUri}");
+                        achievementData.SetAchived(isAchieved);
+                        LocalAchievementDataList.Add(achievementData);
+
+                        AchievementInfo achievementInfo = new AchievementInfo(apiName, achievementData);
+                        if (achievementInfo != null && achievementInfo.AchievementIconFileUri != null)
+                        {
+                            StartCoroutine(achievementInfo.StartGetTexture(achievementInfo.AchievementIconFileUri.ToString()));
+                            LocalAchievementsInfoList.Add(achievementInfo);
+                        }
+
+                        if (logInfo)
+                        {
+                            AchievementInfoLogger.AppendLine($"\n{achievementInfo.AchievementID}\t\t\t\t{achievementInfo.AchievementTitle}\t\t\t\t" +
+                                                                             $"{achievementInfo.AchievementData.IsAchieved()}\t\t\t\t{achievementInfo.AchievementIconFileUri}");
+                        }
                     }
                 }
 
@@ -452,7 +455,8 @@ namespace ModAchievements
             }
             catch (Exception exc)
             {
-                AchievementInfoLogger.AppendLine($"[{ModName}:{nameof(LoadAchievementsData)}({nameof(logInfo)} = {logInfo}] throws exception:\n{exc.Message}");
+                AchievementInfoLogger.Clear();
+                AchievementInfoLogger.AppendLine($"\n[{ModName}:{nameof(LoadAchievementsData)}({nameof(logInfo)} = {logInfo}] throws exception:\n{exc.Message}");
                 ModAPI.Log.Write(AchievementInfoLogger.ToString());
                 AchievementDataLoaded = false;
                 HandleException(exc, nameof(LoadAchievementsData));

@@ -52,8 +52,13 @@ namespace ModAchievements
 
         private string GetIconFileName(AchievementID achievementID)
         {
+            string iconFileName = string.Empty;
             string iconFileUriString = AchievementResource.GetIconFileUriString(achievementID);
-            string iconFileName = iconFileUriString.Replace(AchievementResource.SteamAchievementIconBaseUri, string.Empty);
+           
+            if (!string.IsNullOrEmpty(iconFileUriString))
+            {
+                iconFileName = iconFileUriString.Replace(AchievementResource.SteamAchievementIconBaseUri, string.Empty);
+            }
             return iconFileName;
         }
 
@@ -219,8 +224,13 @@ namespace ModAchievements
 
         private Uri GetIconFileUri(AchievementID achievementID)
         {
-            string iconFileUriString = AchievementResource.GetIconFileUriString(achievementID);
-            Uri iconFileUri = new Uri(iconFileUriString);
+            Uri iconFileUri = default;
+           string iconFileUriString = AchievementResource.GetIconFileUriString(achievementID);
+
+            if (!string.IsNullOrEmpty(iconFileUriString))
+            {
+                iconFileUri = new Uri(iconFileUriString);
+            }
             return iconFileUri;
         }
 

@@ -416,8 +416,8 @@ namespace ModAchievements
 
                 if (logInfo)
                 {
-                    AchievementInfoLogger.AppendLine($"{nameof(AchievementInfo.AchievementID)}\t\t\t\t\t\t\t\t\t{nameof(AchievementInfo.AchievementTitle)}\t\t\t\t\t\t\t\t\t" +
-                        $"{nameof(AchievementInfo.AchievementData.IsAchieved)}\t\t\t\t\t\t\t\t\t{nameof(AchievementInfo.AchievementIconFileUri)}");
+                    AchievementInfoLogger.AppendLine($"\n{nameof(AchievementInfo.AchievementID)}\t\t\t\t\t\t{nameof(AchievementInfo.AchievementTitle)}\t\t\t\t\t\t" +
+                        $"{nameof(AchievementInfo.AchievementData.IsAchieved)}\t\t\t\t\t\t{nameof(AchievementInfo.AchievementIconFileUri)}");
                 }
 
                 foreach (string achievementDebugData in LocalAchievementsDebugData)
@@ -433,15 +433,14 @@ namespace ModAchievements
                     AchievementInfo achievementInfo = new AchievementInfo(apiName, achievementData);
                     if (achievementInfo != null && achievementInfo.AchievementIconFileUri != null)
                     {
+                        if (logInfo)
+                        {
+                            AchievementInfoLogger.AppendLine($"\n{achievementInfo.AchievementID}\t\t\t\t\t\t{achievementInfo.AchievementTitle}\t\t\t\t\t\t" +
+                                                                             $"{achievementInfo.AchievementData.IsAchieved()}\t\t\t\t\t\t{achievementInfo.AchievementIconFileUri}");
+                        }
                         StartCoroutine(achievementInfo.StartGetTexture(achievementInfo.AchievementIconFileUri.ToString()));
                         LocalAchievementsInfoList.Add(achievementInfo);
                     }                   
-
-                    if (logInfo)
-                    {
-                        AchievementInfoLogger.AppendLine($"{achievementInfo.AchievementID}\t\t\t\t\t\t\t\t\t{achievementInfo.AchievementTitle}\t\t\t\t\t\t\t\t\t" +
-                                                                         $"{achievementInfo.AchievementData.IsAchieved()}\t\t\t\t\t\t\t\t\t{achievementInfo.AchievementIconFileUri}");
-                    }
                 }
 
                 if (logInfo)

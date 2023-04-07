@@ -1,5 +1,5 @@
 <Mod ID="ModAchievements">
-  <Compatible>2.1.8</Compatible>
+  <Compatible>2.4.2</Compatible>
   <Button Standard="D9" ID="ModKeybindingId">
     <Name>
       <EN>ModKeybindingId</EN>

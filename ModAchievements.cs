@@ -60,55 +60,42 @@ namespace ModAchievements
         private static KeyCode ModKeybindingId { get; set; } = KeyCode.Alpha9;
         private KeyCode GetConfigurableKey(string buttonId)
         {
-            KeyCode configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
-            string configuredKeybinding = EnumUtils<KeyCode>.GetName(configuredKeyCode);
+
+            KeyCode configuredKeyCode = default;
+            string configuredKeybinding = string.Empty;
+
             try
             {
-                ModAPI.Log.Write($"Using {RuntimeConfiguration}");
+
                 if (File.Exists(RuntimeConfiguration))
                 {
-                    using (var xmlReader = XmlReader.Create(RuntimeConfiguration))
+                    using (var xmlReader = XmlReader.Create(new StreamReader(RuntimeConfiguration)))
                     {
-                        xmlReader.MoveToContent();
                         while (xmlReader.Read())
                         {
-                            if (xmlReader.HasAttributes && xmlReader["ID"] == ModName)
+                            if (xmlReader["ID"] == ModName)
                             {
-                                while (xmlReader.ReadToDescendant(nameof(Button)))
+                                if (xmlReader.ReadToFollowing(nameof(Button)) && xmlReader["ID"] == buttonId)
                                 {
-                                    if (xmlReader.HasAttributes && xmlReader["ID"] == buttonId)
-                                    {
-                                        configuredKeybinding = xmlReader.ReadElementContentAsString();
-                                    }
+                                    configuredKeybinding = xmlReader.ReadElementContentAsString();
                                 }
                             }
                         }
                     }
-
-                    if (!string.IsNullOrEmpty(configuredKeybinding))
-                    {
-                        configuredKeyCode = EnumUtils<KeyCode>.GetValue(configuredKeybinding);
-                    }
-                    else
-                    {
-                        configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
-                        ModAPI.Log.Write($"{configuredKeybinding} was not found! Reverting to default {configuredKeyCode}.");
-                    }
-                }
-                else
-                {
-                    ModAPI.Log.Write($"{RuntimeConfiguration} could not be found! Reverting to default keybindings.");
-                    configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
                 }
 
-                ModAPI.Log.Write(nameof(configuredKeybinding) + $" set to {configuredKeybinding}");
-                ModAPI.Log.Write(nameof(configuredKeyCode) + $" set to {configuredKeyCode}");
+                configuredKeybinding = configuredKeybinding?.Replace("NumPad", "Keypad");
+
+                configuredKeyCode = (KeyCode)(!string.IsNullOrEmpty(configuredKeybinding)
+                                                            ? Enum.Parse(typeof(KeyCode), configuredKeybinding)
+                                                            : GetType().GetProperty(buttonId)?.GetValue(this));
 
                 return configuredKeyCode;
+
             }
             catch (Exception exc)
             {
-                ModAPI.Log.Write(exc);
+                HandleException(exc, nameof(GetConfigurableKey));
                 configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
                 return configuredKeyCode;
             }
@@ -312,6 +299,7 @@ namespace ModAchievements
                 using (var optionsScope = new GUILayout.VerticalScope(GUI.skin.box))
                 {
                     GUILayout.Label($"To toggle the main mod UI, press [{ModKeybindingId}]", GUI.skin.label);
+                    LogAchievementInfoOptionBox();
                     MultiplayerOptionBox();
                 }
             }
@@ -327,6 +315,23 @@ namespace ModAchievements
             {
                 GUI.color = Color.yellow;
                 GUILayout.Label(OnlyForSinglePlayerOrHostMessage(), GUI.skin.label);
+            }
+        }
+
+        private void LogAchievementInfoOptionBox()
+        {
+            try
+            {
+                using (var constructionsoptionScope = new GUILayout.VerticalScope(GUI.skin.box))
+                {
+                    GUI.color = DefaultGuiColor;
+                    GUILayout.Label($"Logging option: ", GUI.skin.label);
+                    LogAchievementInfoOption = GUILayout.Toggle(LogAchievementInfoOption, $"Log achievement info?", GUI.skin.toggle);
+                }
+            }
+            catch (Exception exc)
+            {
+                HandleException(exc, nameof(LogAchievementInfoOptionBox));
             }
         }
 
@@ -418,7 +423,7 @@ namespace ModAchievements
                 foreach (string achievementDebugData in LocalAchievementsDebugData)
                 {
                     ///  achievementDebugData should have output formatted as "<color=" + (m_IsAchieved ? "green" : "red") + ">" + m_ApiName + "</color>"
-                    bool isAchieved = achievementDebugData.Contains("green") ? true : false;
+                    bool isAchieved = achievementDebugData.Contains("green");
                     string apiName = achievementDebugData.Split('>')[1]?.Split('<')[0];
 
                     AchievementData achievementData = new AchievementData(apiName);
@@ -426,11 +431,11 @@ namespace ModAchievements
                     LocalAchievementDataList.Add(achievementData);
 
                     AchievementInfo achievementInfo = new AchievementInfo(apiName, achievementData);
-                    if (achievementInfo != null)
+                    if (achievementInfo != null && achievementInfo.AchievementIconFileUri != null)
                     {
                         StartCoroutine(achievementInfo.StartGetTexture(achievementInfo.AchievementIconFileUri.ToString()));
-                    }
-                    LocalAchievementsInfoList.Add(achievementInfo);
+                        LocalAchievementsInfoList.Add(achievementInfo);
+                    }                   
 
                     if (logInfo)
                     {

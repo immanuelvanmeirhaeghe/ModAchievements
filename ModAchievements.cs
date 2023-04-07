@@ -421,8 +421,7 @@ namespace ModAchievements
                 }
 
                 foreach (string achievementDebugData in LocalAchievementsDebugData)
-                {
-                    ///  achievementDebugData should have output formatted as "<color=" + (m_IsAchieved ? "green" : "red") + ">" + m_ApiName + "</color>"
+                {               
                     bool isAchieved = achievementDebugData.Contains("green");
                     string apiName = achievementDebugData.Split('>')[1]?.Split('<')[0];
 
@@ -432,15 +431,16 @@ namespace ModAchievements
 
                     AchievementInfo achievementInfo = new AchievementInfo(apiName, achievementData);
                     if (achievementInfo != null && achievementInfo.AchievementIconFileUri != null)
-                    {
-                        if (logInfo)
-                        {
-                            AchievementInfoLogger.AppendLine($"\n{achievementInfo.AchievementID}\t\t\t\t\t\t{achievementInfo.AchievementTitle}\t\t\t\t\t\t" +
-                                                                             $"{achievementInfo.AchievementData.IsAchieved()}\t\t\t\t\t\t{achievementInfo.AchievementIconFileUri}");
-                        }
+                    {                     
                         StartCoroutine(achievementInfo.StartGetTexture(achievementInfo.AchievementIconFileUri.ToString()));
                         LocalAchievementsInfoList.Add(achievementInfo);
-                    }                   
+                    }
+
+                    if (logInfo)
+                    {
+                        AchievementInfoLogger.AppendLine($"\n{achievementInfo.AchievementID}\t\t\t\t\t\t{achievementInfo.AchievementTitle}\t\t\t\t\t\t" +
+                                                                         $"{achievementInfo.AchievementData.IsAchieved()}\t\t\t\t\t\t{achievementInfo.AchievementIconFileUri}");
+                    }
                 }
 
                 if (logInfo)

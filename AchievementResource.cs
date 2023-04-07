@@ -151,7 +151,7 @@ namespace ModAchievements
             using (var webRequest = UnityWebRequestTexture.GetTexture(uriString))
             {
                 yield return webRequest.SendWebRequest();
-                if (webRequest.isNetworkError)
+                if (webRequest.result == UnityWebRequest.Result.ConnectionError)
                 {
                     ModAPI.Log.Write($"[{nameof(AchievementResource)}:{nameof(GetIconTexture)}({nameof(uriString)}={uriString})]  web request encountered an error:\n{webRequest.error}");
                 }

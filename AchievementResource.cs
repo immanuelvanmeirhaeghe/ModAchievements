@@ -137,7 +137,7 @@ namespace ModAchievements
                     break;
                 case AchievementID.ACH_FULL_MAP:
                     iconFileUriString = $"{SteamAchievementIconBaseUri}709cf04c4bc39012d62e9bc37b03dad0b34dc289.jpg";
-                    break;
+                    break;                    
                 default:
                     iconFileUriString = string.Empty;
                     break;

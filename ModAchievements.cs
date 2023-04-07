@@ -48,13 +48,15 @@ namespace ModAchievements
 
         public static Rect LocalDebugMenuAchievementsScreen = new Rect(ModAchievementsScreen.x, ModAchievementsScreen.y, ModAchievementsScreen.width / 2f, ModAchievementsScreen.height / 2f);
         public static Rect ModAchievementsScreen = new Rect(ModScreenStartPositionX, ModScreenStartPositionY, ModScreenTotalWidth, ModScreenTotalHeight);
-        public static Vector2 UnlockedAchievementsScrollViewPosition;
+        public static Vector2 AchievementsScrollViewPosition;
         public static Vector2 LockedAchievementsScrollViewPosition;
 
         public static AchievementData SelectedAchievementData;
         public static List<string> LocalAchievementsDebugData = new List<string>();
         public static List<AchievementData> LocalAchievementDataList = new List<AchievementData>();
-       
+
+
+        private static readonly string LogPath = Path.Combine(Application.dataPath.Replace("GH_Data", "Logs"), $"{ModName}.log");
         private static readonly string RuntimeConfiguration = Path.Combine(Application.dataPath.Replace("GH_Data", "Mods"), $"{nameof(RuntimeConfiguration)}.xml");
         private static KeyCode ModKeybindingId { get; set; } = KeyCode.Alpha9;
         private KeyCode GetConfigurableKey(string buttonId)
@@ -279,9 +281,7 @@ namespace ModAchievements
                     }
                     if (AchievementDataLoaded)
                     {
-                        UnlockedAchievementsScrollView();
-
-                        LockedAchievementsScrollView();
+                        AchievementsScrollView();
                     }
                 }
             }
@@ -321,11 +321,11 @@ namespace ModAchievements
         {
             try
             {
-                using (var constructionsoptionScope = new GUILayout.VerticalScope(GUI.skin.box))
+                using (var logachievementsoptionScope = new GUILayout.VerticalScope(GUI.skin.box))
                 {
                     GUI.color = DefaultGuiColor;
                     GUILayout.Label($"Logging option: ", GUI.skin.label);
-                    LogAchievementInfoOption = GUILayout.Toggle(LogAchievementInfoOption, $"Log achievement info?", GUI.skin.toggle);
+                    LogAchievementInfoOption = GUILayout.Toggle(LogAchievementInfoOption, $"Log achievement info to {LogPath}?", GUI.skin.toggle);
                 }
             }
             catch (Exception exc)
@@ -472,9 +472,9 @@ namespace ModAchievements
             }
         }
 
-        private void UnlockedAchievementsScrollView()
+        private void AchievementsScrollView()
         {
-            UnlockedAchievementsScrollViewPosition = GUILayout.BeginScrollView(UnlockedAchievementsScrollViewPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
+            AchievementsScrollViewPosition = GUILayout.BeginScrollView(AchievementsScrollViewPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
 
             if (LocalAchievementDataList != null && LocalAchievementDataList.Count > 0)
             {
@@ -482,19 +482,7 @@ namespace ModAchievements
             }
 
             GUILayout.EndScrollView();
-        }
-
-        private void LockedAchievementsScrollView()
-        {
-            LockedAchievementsScrollViewPosition = GUILayout.BeginScrollView(LockedAchievementsScrollViewPosition, GUI.skin.scrollView, GUILayout.MinHeight(150f));
-
-            if (LocalAchievementDataList != null && LocalAchievementDataList.Count > 0)
-            {
-                AddAchievementInfoLabels();
-            }
-
-            GUILayout.EndScrollView();
-        }
+        }             
 
         private void AddAchievementInfoLabels()
         {

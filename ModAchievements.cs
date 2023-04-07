@@ -492,10 +492,18 @@ namespace ModAchievements
                 {
                     AchievementID id = EnumUtils<AchievementID>.GetValue(localAchievementData.GetApiName());
 
+                    StartCoroutine(AchievementResource.LoadTexture(delegate (Texture2D icont)
+                    {
+                        AchievementResource.SteamAchievementIconTexture = icont;
+                    }, AchievementResource.GetIconFileUriString(id)));
+
                     GUI.contentColor = localAchievementData.IsAchieved() ? Color.green : Color.red;
                     GUIContent content = new GUIContent(AchievementResource.GetTitle(id), AchievementResource.GetDescription(id));
                     using (var horScope = new GUILayout.HorizontalScope(GUI.skin.box))
                     {
+                        GUI.DrawTexture(new Rect(0f, 0f, AchievementResource.SteamAchievementIconTexture.width, AchievementResource.SteamAchievementIconTexture.height), 
+                            AchievementResource.SteamAchievementIconTexture);
+
                         GUILayout.Label(content, GUI.skin.label);
                         if (!localAchievementData.IsAchieved())
                         {
@@ -508,7 +516,6 @@ namespace ModAchievements
                         }
                     }
                 }
-
             }
             catch (Exception exc)
             {

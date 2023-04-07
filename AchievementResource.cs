@@ -1,5 +1,7 @@
 ﻿using ModAchievements.Enums;
+using System;
 using System.Collections;
+using System.Net;
 using UnityEngine;
 using UnityEngine.Networking;
 using static Mono.Security.X509.X520;
@@ -8,7 +10,7 @@ namespace ModAchievements
 {
     public static class AchievementResource
     {
-        public static readonly string SteamAchievementIconBaseUri = $"https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/815370/";
+        public static readonly string SteamAchievementIconBaseUri = $"https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/815370/";
         public static readonly string SteamAchievementsUri = $"https://steamcommunity.com/stats/815370/achievements/";
 
         public static string SteamAchievementIconFileUriString;
@@ -138,7 +140,121 @@ namespace ModAchievements
                     break;
                 case AchievementID.ACH_FULL_MAP:
                     iconFileUriString = $"{SteamAchievementIconBaseUri}709cf04c4bc39012d62e9bc37b03dad0b34dc289.jpg";
-                    break;                    
+                    break;
+
+                case AchievementID.ACH_NEW_FRIEND:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}37f56f7404924d249b20af2525e9a5d958635af3.jpg";
+                    break;
+
+                case AchievementID.ACH_GAIN_REPUTATION_800_PLANTING:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}31b698211baae674775fe1d64f19a23f86b90c7d.jpg";
+                    break;
+
+                case AchievementID.ACH_GAIN_REPUTATION_800_HUNTING:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}a3639fdedd73b17a123e413b2886362e4c6056df.jpg";
+                    break;
+
+                case AchievementID.ACH_GAIN_REPUTATION_800_FISHING:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}86bf0982462efe781070f79517b80e4b8ea16778.jpg";
+                    break;
+
+                case AchievementID.ACH_BRING_9_KIDS_BACK:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}e06dcc0de0e037dc1b5f6c3ee60eff8727cd3479.jpg";
+                    break;
+
+                case AchievementID.ACH_HEAL_10_TRIBES:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}b71877865b6a4982fec951bfe7a4e1eb47e98d7c.jpg";
+                    break;
+
+                case AchievementID.ACH_BURN_10_CORPSES:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}8b1af3e9df40e773ea1bc200176b934273c6d3aa.jpg";
+                    break;
+
+                case AchievementID.ACH_BURN_10_TRASHES:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}5abb755f04a82d31f965644db38d82cf9191108a.jpg";
+                    break;
+
+                case AchievementID.ACH_HELP_5_FISHERMEN:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}569ddfbcc7d15584b1c5b660eac599b929feadab.jpg";
+                    break;
+
+                case AchievementID.ACH_REBUILD_10_TOTEMS:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}c373601279caf1b02e7b4812eb2f4d3e6a1e3622.jpg";
+                    break;
+
+                case AchievementID.ACH_FREE_9_WOMEN:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}a18b8f2c103958026ddd79557f84cc1f9e7ef8d1.jpg";
+                    break; ;
+
+                case AchievementID.ACH_FIND_5_MAPS:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}cae00293da801cd51d14e94625f58e97fc5a2304.jpg";
+                    break;
+
+                case AchievementID.ACH_COMPLETE_SOA3_STORY:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}40f7ced435b743c40a6537691e0addd721930bbd.jpg";
+                    break;
+
+                case AchievementID.RAPORT_BACK_TO_THE_BASE:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}e4e763ea98e9ad1547be590c347c0b39a7dcba96.jpg";
+                    break;
+
+                case AchievementID.COMPLETE_MUAGI_TRIAL:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}fc0b52f3ed73f6370aeafdb70e9eb04365f3fa7e.jpg";
+                    break;
+
+                case AchievementID.COMPLETE_HABBAKU_TRIAL:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}136c115abab23dbba0dc53e083d94d8c91c9afce.jpg";
+                    break;
+
+                case AchievementID.COMPLETE_UNGARACA_TRIAL:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}362f95a7126bdb3eb5b337e041b3680e1d5ee6d5.jpg";
+                    break;
+
+                case AchievementID.REACH_YABAHUACA_VILLAGE:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}249ad341167f7a5557e2f5c4f2b368bcdf4817a2.jpg";
+                    break;
+
+                case AchievementID.PASS_YABAHUACA_TRIAL:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}6c5fe7e1e0291cf3f7c690cfbd7f2effc85db4f5.jpg";
+                    break;
+
+                case AchievementID.DISCOVER_VILLAGE_MUAGI:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}5aef54d40651ccd3d93b18a475ba6b9fd6909553.jpg";
+                    break;
+
+                case AchievementID.DISCOVER_VILLAGE_HABBAKU:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}2638df07a1d4f915972c66ef73bd111a611d26b4.jpg";
+                    break;
+
+                case AchievementID.DISCOVER_VILLAGE_UNGARACA:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}5fe325cf4f2dffb8c27a176a994140417bc3bf7f.jpg";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_MUAGI_LEGENDS:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}22c9698a102584bbc483185cac223986c96bba30.jpg";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_UNGARACA_LEGENDS:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}80c59e16e2d6a54e7dd9187d58e471dbf5672608.jpg";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_HABBAKU_LEGENDS:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}45ead9353a39a3d30e145f8659014b50b26fc46c.jpg";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_SOA_ACHIEVEMENTS:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}984b3652091d8b2706946c350698e83c38c998e6.jpg";
+                    break;
+
+                case AchievementID.ACH_EMOTIONAL_SUPPORT:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}08368760353c5343864dcad63a9dcde897afdf04.jpg";
+                    break;
+
+                case AchievementID.ACH_CIRCLE_OF_LIFE:
+                    iconFileUriString = $"{SteamAchievementIconBaseUri}4004690c400fc07675da513944e8d9915471bf90.jpg";
+                    break;
+
+
                 default:
                     iconFileUriString = string.Empty;
                     break;
@@ -147,19 +263,35 @@ namespace ModAchievements
             return iconFileUriString;
         }
 
-        public static IEnumerator GetIconTexture(string uriString)
+        //public static IEnumerator GetIconTexture(string uriString)
+        //{
+        //    using (var webRequest = UnityWebRequestTexture.GetTexture(uriString))
+        //    {
+        //        yield return webRequest.SendWebRequest();
+        //        if (webRequest.result == UnityWebRequest.Result.ConnectionError)
+        //        {
+        //            ModAPI.Log.Write($"[{nameof(AchievementResource)}:{nameof(GetIconTexture)}({nameof(uriString)}={uriString})]  web request encountered an error:\n{webRequest.error}");
+        //        }
+        //        else
+        //        {
+        //            var texture = DownloadHandlerTexture.GetContent(webRequest);
+        //            SteamAchievementIconTexture = texture;
+        //        }
+        //    }
+        //}
+
+        public static IEnumerator LoadTexture(Action<Texture2D> action, string url)
         {
-            using (var webRequest = UnityWebRequestTexture.GetTexture(uriString))
+            using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(url))
             {
-                yield return webRequest.SendWebRequest();
-                if (webRequest.result == UnityWebRequest.Result.ConnectionError)
+                yield return uwr.SendWebRequest();
+                if (uwr.result == UnityWebRequest.Result.ConnectionError)
                 {
-                    ModAPI.Log.Write($"[{nameof(AchievementResource)}:{nameof(GetIconTexture)}({nameof(uriString)}={uriString})]  web request encountered an error:\n{webRequest.error}");
+                    ModAPI.Log.Write($"[{nameof(AchievementResource)}:{nameof(LoadTexture)}({nameof(url)}={url})]  web request encountered an error:\n{uwr.error}");
                 }
                 else
                 {
-                    var texture = DownloadHandlerTexture.GetContent(webRequest);
-                    SteamAchievementIconTexture = texture;
+                    action(DownloadHandlerTexture.GetContent(uwr));
                 }
             }
         }

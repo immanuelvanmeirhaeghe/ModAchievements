@@ -11,7 +11,6 @@ namespace ModAchievements
     public static class AchievementResource
     {
         public static readonly string SteamAchievementIconBaseUri = $"https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/815370/";
-        public static readonly string SteamAchievementsUri = $"https://steamcommunity.com/stats/815370/achievements/";
 
         public static string SteamAchievementIconFileUriString;
         public static Texture2D SteamAchievementIconTexture;

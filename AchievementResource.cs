@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using static Mono.Security.X509.X520;
 
 namespace ModAchievements
 {
@@ -288,11 +289,123 @@ namespace ModAchievements
                 case AchievementID.ACH_FULL_MAP:
                     Title = $"Cartographer";
                     break;
+
+                case AchievementID.ACH_NEW_FRIEND:
+                    Title = $"A new friend";
+                    break;
+
+                case AchievementID.ACH_GAIN_REPUTATION_800_PLANTING:
+                    Title = $"Mu'agi Friend";
+                    break;
+
+                case AchievementID.ACH_GAIN_REPUTATION_800_HUNTING:
+                    Title = $"Un'garaca Friend";
+                    break;
+
+                case AchievementID.ACH_GAIN_REPUTATION_800_FISHING:
+                    Title = $"Habbacu Friend";
+                    break;
+
+                case AchievementID.ACH_BRING_9_KIDS_BACK:
+                    Title = $"Babysitter";
+                    break;
+
+                case AchievementID.ACH_HEAL_10_TRIBES:
+                    Title = $"Molineria-man";
+                    break;
+
+                case AchievementID.ACH_BURN_10_CORPSES:
+                    Title = $"Rest in peace";
+                    break;
+
+                case AchievementID.ACH_BURN_10_TRASHES:
+                    Title = $"Cleaning volunteer";
+                    break;
+
+                case AchievementID.ACH_HELP_5_FISHERMEN:
+                    Title = $"Fishing in troubled waters";
+                    break;
+
+                case AchievementID.ACH_REBUILD_10_TOTEMS:
+                    Title = $"Handyman";
+                    break;
+
+                case AchievementID.ACH_FREE_9_WOMEN:
+                    Title = $"Cage opener";
+                    break;
+
+                case AchievementID.ACH_FIND_5_MAPS:
+                    Title = $"Map Collector";
+                    break;
+
+                case AchievementID.ACH_COMPLETE_SOA3_STORY:
+                    Title = $"This is how it began";
+                    break;
+
+                case AchievementID.RAPORT_BACK_TO_THE_BASE:
+                    Title = $"This is Jake Higgins...";
+                    break;
+
+                case AchievementID.COMPLETE_MUAGI_TRIAL:
+                    Title = $"The Ritual of Mu'agi";
+                    break;
+
+                case AchievementID.COMPLETE_HABBAKU_TRIAL:
+                    Title = $"The Ritual of Habbacu";
+                    break;
+
+                case AchievementID.COMPLETE_UNGARACA_TRIAL:
+                    Title = $"The Ritual of Un'garaca";
+                    break;
+
+                case AchievementID.REACH_YABAHUACA_VILLAGE:
+                    Title = $"Are we there yet?";
+                    break;
+
+                case AchievementID.PASS_YABAHUACA_TRIAL:
+                    Title = $"Work hard, play hard";
+                    break;
+
+                case AchievementID.DISCOVER_VILLAGE_MUAGI:
+                    Title = $"Oyohua Mu'agi";
+                    break;
+
+                case AchievementID.DISCOVER_VILLAGE_HABBAKU:
+                    Title = $"Oyohua Habbacu";
+                    break;
+
+                case AchievementID.DISCOVER_VILLAGE_UNGARACA:
+                    Title = $"Oyohua Un'garaca";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_MUAGI_LEGENDS:
+                    Title = $"The Legends of Mu'agi";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_UNGARACA_LEGENDS:
+                    Title = $"The Legends of Un'garaca";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_HABBAKU_LEGENDS:
+                    Title = $"The Legends of Habbacu";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_SOA_ACHIEVEMENTS:
+                    Title = $"Thats the spirit!";
+                    break;
+
+                case AchievementID.ACH_EMOTIONAL_SUPPORT:
+                    Title = $"Emotional support";
+                    break;
+
+                case AchievementID.ACH_CIRCLE_OF_LIFE:
+                    Title = $"Circle of Life";
+                    break;
+
                 default:
                     Title = string.Empty;
                     break;
             }
-
             return Title;
         }
 
@@ -421,11 +534,123 @@ namespace ModAchievements
                 case AchievementID.ACH_FULL_MAP:
                     Description = $"Unlock 60 places on the map";
                     break;
+
+                case AchievementID.ACH_NEW_FRIEND:
+                    Description = $"Put an animal into Animal Pen";
+                    break;
+
+                case AchievementID.ACH_GAIN_REPUTATION_800_PLANTING:
+                    Description = $"Gain 800 trust of the Mu'agi tribe";
+                    break;
+
+                case AchievementID.ACH_GAIN_REPUTATION_800_HUNTING:
+                    Description = $"Gain 800 trust of the Un'garaca tribe";
+                    break;
+
+                case AchievementID.ACH_GAIN_REPUTATION_800_FISHING:
+                    Description = $"Gain 800 trust of the Habbacu tribe";
+                    break;
+
+                case AchievementID.ACH_BRING_9_KIDS_BACK:
+                    Description = $"Return 9 kids to safety";
+                    break;
+
+                case AchievementID.ACH_HEAL_10_TRIBES:
+                    Description = $" a Tribe Member";
+                    break;
+
+                case AchievementID.ACH_BURN_10_CORPSES:
+                    Description = $"Burn 10 Tribe Members' corpses";
+                    break;
+
+                case AchievementID.ACH_BURN_10_TRASHES:
+                    Description = $"Burn 10 Toxic Waste Piles";
+                    break;
+
+                case AchievementID.ACH_HELP_5_FISHERMEN:
+                    Description = $"Help 5 Tribe Fishermen";
+                    break;
+
+                case AchievementID.ACH_REBUILD_10_TOTEMS:
+                    Description = $"Rebuild 10 Tribe Totems";
+                    break;
+
+                case AchievementID.ACH_FREE_9_WOMEN:
+                    Description = $"Free 9 Tribe Women";
+                    break;
+
+                case AchievementID.ACH_FIND_5_MAPS:
+                    Description = $"Find 5 maps";
+                    break;
+
+                case AchievementID.ACH_COMPLETE_SOA3_STORY:
+                    Description = $"Complete the Spirits of Amazonia story";
+                    break;
+
+                case AchievementID.RAPORT_BACK_TO_THE_BASE:
+                    Description = $"Report back to base";
+                    break;
+
+                case AchievementID.COMPLETE_MUAGI_TRIAL:
+                    Description = $"Complete the Mu'agi Trial";
+                    break;
+
+                case AchievementID.COMPLETE_HABBAKU_TRIAL:
+                    Description = $"Complete the Habbacu Trial";
+                    break;
+
+                case AchievementID.COMPLETE_UNGARACA_TRIAL:
+                    Description = $"Complete the Un'garaca Trial";
+                    break;
+
+                case AchievementID.REACH_YABAHUACA_VILLAGE:
+                    Description = $"Reach the Yabahuaca village";
+                    break;
+
+                case AchievementID.PASS_YABAHUACA_TRIAL:
+                    Description = $"Complete the Yabahuaca Trial";
+                    break;
+
+                case AchievementID.DISCOVER_VILLAGE_MUAGI:
+                    Description = $"Discover the Mu'agi Village";
+                    break;
+
+                case AchievementID.DISCOVER_VILLAGE_HABBAKU:
+                    Description = $"Discover the Habbacu Village";
+                    break;
+
+                case AchievementID.DISCOVER_VILLAGE_UNGARACA:
+                    Description = $"Discover the Un'garaca Village";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_MUAGI_LEGENDS:
+                    Description = $"Complete all Mu'agi Legends";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_UNGARACA_LEGENDS:
+                    Description = $"Complete all Un'garaca Legends";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_HABBAKU_LEGENDS:
+                    Description = $"Complete all Habbacu Legends";
+                    break;
+
+                case AchievementID.COMPLETE_ALL_SOA_ACHIEVEMENTS:
+                    Description = $"Complete all Spirits of Amazonia achievements";
+                    break;
+
+                case AchievementID.ACH_EMOTIONAL_SUPPORT:
+                    Description = $"Pet an animal";
+                    break;
+
+                case AchievementID.ACH_CIRCLE_OF_LIFE:
+                    Description = $"Breed an animal";
+                    break;
+
                 default:
                     Description = string.Empty;
                     break;
             }
-
             return Description;
         }
     }

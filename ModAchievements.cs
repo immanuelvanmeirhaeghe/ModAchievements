@@ -416,14 +416,14 @@ namespace ModAchievements
 
                 if (logInfo)
                 {
-                    AchievementInfoLogger.AppendLine($" \nApiName\t\t\t\tIsAchieved");
+                    AchievementInfoLogger.AppendLine($" \nApiName\tTitel\tDescription\tIsAchieved\t");
                 }
 
                 foreach (string achievementDebugData in LocalAchievementsDebugData)
                 {
                     bool isAchieved = achievementDebugData.Contains("green");
                     string apiName = achievementDebugData.Split('>')[1]?.Split('<')[0];
-
+                    AchievementID id = EnumUtils<AchievementID>.GetValue(apiName);
                     AchievementData achievementData = new AchievementData(apiName);
                     if (achievementData != null)
                     {
@@ -432,7 +432,7 @@ namespace ModAchievements
                         
                         if (logInfo)
                         {
-                            AchievementInfoLogger.AppendLine($"\n{achievementData.GetApiName()}\t\t\t\t{achievementData.IsAchieved()}");
+                            AchievementInfoLogger.AppendLine($"\n{achievementData.GetApiName()}\t{AchievementResource.GetTitle(id)}\t{AchievementResource.GetDescription(id)}\t{achievementData.IsAchieved()}");
                         }
                     }
                 }
@@ -490,8 +490,10 @@ namespace ModAchievements
             {
                 foreach (AchievementData localAchievementData in LocalAchievementDataList)
                 {
+                    AchievementID id = EnumUtils<AchievementID>.GetValue(localAchievementData.GetApiName());
+
                     GUI.contentColor = localAchievementData.IsAchieved() ? Color.green : Color.red;
-                    GUIContent content = new GUIContent(localAchievementData.GetApiName(), localAchievementData.IsAchieved().ToString());
+                    GUIContent content = new GUIContent(AchievementResource.GetTitle(id), AchievementResource.GetDescription(id));
                     using (var horScope = new GUILayout.HorizontalScope(GUI.skin.box))
                     {
                         GUILayout.Label(content, GUI.skin.label);
@@ -501,6 +503,7 @@ namespace ModAchievements
                             {
                                 SelectedAchievementData = localAchievementData;
                                 OnClickUnlockAchievementButton();
+                                OnClickLoadAchievementsButton();
                             }
                         }
                     }

@@ -496,18 +496,18 @@ namespace ModAchievements
                 {
                     AchievementID id = EnumUtils<AchievementID>.GetValue(localAchievementData.GetApiName());
 
-                    StartCoroutine(AchievementResource.LoadTexture(delegate (Texture2D icont)
-                    {
-                        AchievementResource.SteamAchievementIconTexture = icont;
-                    }, AchievementResource.GetIconFileUriString(id)));
+                    //StartCoroutine(AchievementResource.LoadTexture(delegate (Texture2D icont)
+                    //{
+                    //    AchievementResource.SteamAchievementIconTexture = icont;
+                    //}, AchievementResource.GetIconFileUriString(id)));
 
                     GUI.contentColor = localAchievementData.IsAchieved() ? Color.green : Color.red;
                     GUIContent content = new GUIContent(AchievementResource.GetTitle(id), AchievementResource.GetDescription(id));
 
                     using (var horScope = new GUILayout.HorizontalScope(GUI.skin.box))
                     {
-                        GUI.DrawTexture(new Rect(AchievementResource.SteamAchievementIconTexture.width - 40f, 20f, AchievementResource.SteamAchievementIconTexture.width, AchievementResource.SteamAchievementIconTexture.height),
-                            AchievementResource.SteamAchievementIconTexture);
+                        //GUI.DrawTexture(new Rect(AchievementResource.SteamAchievementIconTexture.width/2f - 40f, 20f, AchievementResource.SteamAchievementIconTexture.width/2f, AchievementResource.SteamAchievementIconTexture.height/2f),
+                        //    AchievementResource.SteamAchievementIconTexture);
 
                         GUILayout.Label(content, GUI.skin.label);
 

@@ -55,19 +55,16 @@ namespace ModAchievements
         public static List<string> LocalAchievementsDebugData = new List<string>();
         public static List<AchievementData> LocalAchievementDataList = new List<AchievementData>();
 
-
         private static readonly string LogPath = Path.Combine(Application.dataPath.Replace("GH_Data", "Logs"), $"{ModName}.log");
         private static readonly string RuntimeConfiguration = Path.Combine(Application.dataPath.Replace("GH_Data", "Mods"), $"{nameof(RuntimeConfiguration)}.xml");
         private static KeyCode ModKeybindingId { get; set; } = KeyCode.Alpha9;
         private KeyCode GetConfigurableKey(string buttonId)
         {
-
             KeyCode configuredKeyCode = default;
             string configuredKeybinding = string.Empty;
 
             try
             {
-
                 if (File.Exists(RuntimeConfiguration))
                 {
                     using (var xmlReader = XmlReader.Create(new StreamReader(RuntimeConfiguration)))
@@ -85,19 +82,26 @@ namespace ModAchievements
                     }
                 }
 
-                configuredKeybinding = configuredKeybinding?.Replace("NumPad", "Keypad");
-
-                configuredKeyCode = (KeyCode)(!string.IsNullOrEmpty(configuredKeybinding)
-                                                            ? Enum.Parse(typeof(KeyCode), configuredKeybinding)
-                                                            : GetType().GetProperty(buttonId)?.GetValue(this));
-
+                if (!string.IsNullOrEmpty(configuredKeybinding))
+                {
+                    configuredKeyCode = EnumUtils<KeyCode>.GetValue(configuredKeybinding);
+                }
+                else
+                {
+                    if (buttonId == nameof(ModKeybindingId))
+                    {
+                        configuredKeyCode = ModKeybindingId;
+                    }
+                }
                 return configuredKeyCode;
-
             }
             catch (Exception exc)
             {
                 HandleException(exc, nameof(GetConfigurableKey));
-                configuredKeyCode = (KeyCode)(GetType().GetProperty(buttonId)?.GetValue(this));
+                if (buttonId == nameof(ModKeybindingId))
+                {
+                    configuredKeyCode = ModKeybindingId;
+                }
                 return configuredKeyCode;
             }
         }
@@ -416,7 +420,7 @@ namespace ModAchievements
 
                 if (logInfo)
                 {
-                    AchievementInfoLogger.AppendLine($" \nApiName\tTitel\tDescription\tIsAchieved\t");
+                    AchievementInfoLogger.AppendLine($" \nApiName\tTitel\tDescription\tIsAchieved\tIconURI");
                 }
 
                 foreach (string achievementDebugData in LocalAchievementsDebugData)
@@ -432,7 +436,7 @@ namespace ModAchievements
                         
                         if (logInfo)
                         {
-                            AchievementInfoLogger.AppendLine($"\n{achievementData.GetApiName()}\t{AchievementResource.GetTitle(id)}\t{AchievementResource.GetDescription(id)}\t{achievementData.IsAchieved()}");
+                            AchievementInfoLogger.AppendLine($"\n{achievementData.GetApiName()}\t{AchievementResource.GetTitle(id)}\t{AchievementResource.GetDescription(id)}\t{achievementData.IsAchieved()}\t{AchievementResource.GetIconFileUriString(id)}");
                         }
                     }
                 }
@@ -499,15 +503,17 @@ namespace ModAchievements
 
                     GUI.contentColor = localAchievementData.IsAchieved() ? Color.green : Color.red;
                     GUIContent content = new GUIContent(AchievementResource.GetTitle(id), AchievementResource.GetDescription(id));
+
                     using (var horScope = new GUILayout.HorizontalScope(GUI.skin.box))
                     {
-                        GUI.DrawTexture(new Rect(0f, 0f, AchievementResource.SteamAchievementIconTexture.width, AchievementResource.SteamAchievementIconTexture.height), 
+                        GUI.DrawTexture(new Rect(AchievementResource.SteamAchievementIconTexture.width - 40f, 20f, AchievementResource.SteamAchievementIconTexture.width, AchievementResource.SteamAchievementIconTexture.height),
                             AchievementResource.SteamAchievementIconTexture);
 
                         GUILayout.Label(content, GUI.skin.label);
+
                         if (!localAchievementData.IsAchieved())
                         {
-                            if (GUILayout.Button("Unlock", GUI.skin.button))
+                            if (GUILayout.Button("Unlock", GUI.skin.button, GUILayout.MaxWidth(150f)))
                             {
                                 SelectedAchievementData = localAchievementData;
                                 OnClickUnlockAchievementButton();

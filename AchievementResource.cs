@@ -11,7 +11,6 @@ namespace ModAchievements
     public static class AchievementResource
     {
         public static readonly string SteamAchievementIconBaseUri = $"https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/815370/";
-
         public static string SteamAchievementIconFileUriString;
         public static Texture2D SteamAchievementIconTexture;
 
@@ -261,23 +260,6 @@ namespace ModAchievements
             SteamAchievementIconFileUriString = iconFileUriString;
             return iconFileUriString;
         }
-
-        //public static IEnumerator GetIconTexture(string uriString)
-        //{
-        //    using (var webRequest = UnityWebRequestTexture.GetTexture(uriString))
-        //    {
-        //        yield return webRequest.SendWebRequest();
-        //        if (webRequest.result == UnityWebRequest.Result.ConnectionError)
-        //        {
-        //            ModAPI.Log.Write($"[{nameof(AchievementResource)}:{nameof(GetIconTexture)}({nameof(uriString)}={uriString})]  web request encountered an error:\n{webRequest.error}");
-        //        }
-        //        else
-        //        {
-        //            var texture = DownloadHandlerTexture.GetContent(webRequest);
-        //            SteamAchievementIconTexture = texture;
-        //        }
-        //    }
-        //}
 
         public static IEnumerator LoadTexture(Action<Texture2D> action, string url)
         {

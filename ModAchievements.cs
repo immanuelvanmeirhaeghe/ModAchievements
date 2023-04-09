@@ -50,11 +50,11 @@ namespace ModAchievements
         public static bool AchievementDataLoaded { get; set; } = false;
         public static bool LogAchievementInfoOption { get; private set; } = false;
         public static bool IsLocalMenuDebugAchievementsShown { get; private set; } = false;
+        public static bool IsAchievementInfoScreenShown { get; private set; } = false;
 
         public static Rect ModAchievementsScreen = new Rect(ModScreenStartPositionX, ModScreenStartPositionY, ModScreenTotalWidth, ModScreenTotalHeight);
         public static Rect AchievementInfoScreen = new Rect(ModAchievementsScreen.x, ModAchievementsScreen.y, ModAchievementsScreen.width / 2f, ModAchievementsScreen.height / 2f);
         public static Vector2 AchievementsScrollViewPosition;
-        public static Vector2 LockedAchievementsScrollViewPosition;
 
         public static AchievementData SelectedAchievementData;
         public static List<string> LocalAchievementsDebugData ;
@@ -220,6 +220,7 @@ namespace ModAchievements
             {
                 if (!ShowModUI)
                 {
+                    InitData();
                     EnableCursor(true);
                 }
                 ToggleShowUI(1);
@@ -553,8 +554,9 @@ namespace ModAchievements
                     using (var infobuttonsScope = new GUILayout.HorizontalScope(GUI.skin.box))
                     {
                         GUI.contentColor = localAchievementData.IsAchieved() ? Color.green : Color.red;
-                        GUIContent content = new GUIContent(AchievementResource.GetTitle(id), AchievementResource.GetDescription(id));
-                        if (GUILayout.Button(content, GUI.skin.button))
+                        GUIContent content = new GUIContent(AchievementResource.GetTitle(id));
+                        GUILayout.Label(content, GUI.skin.label);
+                        if (GUILayout.Button("Info", GUI.skin.button, GUILayout.MaxWidth(150f)))
                         {
                             SelectedAchievementData = localAchievementData;
                             OnClickShowAchievementInfoButton();                            
@@ -592,7 +594,11 @@ namespace ModAchievements
                     AchievementResource.SteamAchievementIconTexture = icont;
                 }, AchievementResource.GetIconFileUriString(id)));
 
-                GUI.DrawTexture(new Rect(AchievementInfoScreen.x + 20f, 20f, AchievementResource.SteamAchievementIconTexture.width, AchievementResource.SteamAchievementIconTexture.height),
+                GUI.contentColor = SelectedAchievementData.IsAchieved() ? Color.green : Color.red;
+                GUIContent content = new GUIContent(AchievementResource.GetTitle(id), AchievementResource.GetDescription(id));
+                GUILayout.Label(content, GUI.skin.label);
+
+                GUI.DrawTexture(new Rect(AchievementInfoScreen.x + 20f, 40f, AchievementResource.SteamAchievementIconTexture.width, AchievementResource.SteamAchievementIconTexture.height),
                     AchievementResource.SteamAchievementIconTexture);
              
                 using (var dialogButtonsScope = new GUILayout.HorizontalScope(GUI.skin.box))

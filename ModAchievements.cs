@@ -53,7 +53,7 @@ namespace ModAchievements
         public static bool IsAchievementInfoScreenShown { get; private set; } = false;
 
         public static Rect ModAchievementsScreen = new Rect(ModScreenStartPositionX, ModScreenStartPositionY, ModScreenTotalWidth, ModScreenTotalHeight);
-        public static Rect AchievementInfoScreen = new Rect(ModAchievementsScreen.x, ModAchievementsScreen.y, ModAchievementsScreen.width / 2f, ModAchievementsScreen.height / 2f);
+        public static Rect AchievementInfoScreen = new Rect(ModAchievementsScreen.x -40f, ModAchievementsScreen.y-40f, ModScreenTotalWidth / 2f, ModScreenTotalHeight / 2f);
         public static Vector2 AchievementsScrollViewPosition;
 
         public static AchievementData SelectedAchievementData;
@@ -256,7 +256,13 @@ namespace ModAchievements
 
             if (ShowInfoUI)
             {
-                AchievementInfoScreen = GUILayout.Window(GetHashCode(), AchievementInfoScreen, InitAchievementInfoWindow, $"Achievement Info", GUI.skin.window);
+                AchievementInfoScreen = GUILayout.Window(GetHashCode(), AchievementInfoScreen, InitAchievementInfoWindow, $"Achievement Info", GUI.skin.window,
+                                                                                                         GUILayout.ExpandWidth(true),
+                                                                                                          GUILayout.MinWidth(ModScreenMinWidth),
+                                                                                                          GUILayout.MaxWidth(ModScreenMaxWidth / 2f),
+                                                                                                          GUILayout.ExpandHeight(true),
+                                                                                                          GUILayout.MinHeight(ModScreenMinHeight),
+                                                                                                          GUILayout.MaxHeight(ModScreenMaxHeight / 2f));
             }
         }
 
@@ -418,13 +424,14 @@ namespace ModAchievements
                 using (var optionsScope = new GUILayout.VerticalScope(GUI.skin.box))
                 {
                     GUI.color = DefaultGuiColor;
-                    GUILayout.Label($"Press [Toggle stats] to toggle your achievements screen showing more statistical info: ", GUI.skin.label);
+                    GUILayout.Label($"Press [Toggle stats] to toggle the developer debug achievements and stats screen: ", GUI.skin.label);
                     if (GUILayout.Button("Toggle stats", GUI.skin.button))
                     {
                         ToggleDebugStatistics();
                     }
 
-                    GUILayout.Label($"Press [Load achievements] to show your current achievement and status colorcoded: ", GUI.skin.label);
+                    GUILayout.Label($"Press [Load achievements] to show your current achievements. ", GUI.skin.label);
+                    GUILayout.Label($"Press [Info] to show more details:", GUI.skin.label);
                     if (GUILayout.Button("Load achievements", GUI.skin.button))
                     {
                         OnClickLoadAchievementsButton();
@@ -535,7 +542,7 @@ namespace ModAchievements
 
         private void AchievementsScrollView()
         {
-            AchievementsScrollViewPosition = GUILayout.BeginScrollView(AchievementsScrollViewPosition, GUI.skin.scrollView);
+            AchievementsScrollViewPosition = GUILayout.BeginScrollView(AchievementsScrollViewPosition, GUI.skin.scrollView, GUILayout.MinHeight(250f));
             if (LocalAchievementDataList != null && LocalAchievementDataList.Count > 0)
             {
                 AchievementInfoButtons();
@@ -548,14 +555,12 @@ namespace ModAchievements
             try
             {
                 foreach (AchievementData localAchievementData in LocalAchievementDataList)
-                {
-                    AchievementID id = EnumUtils<AchievementID>.GetValue(localAchievementData.GetApiName());
-                    
+                {                    
                     using (var infobuttonsScope = new GUILayout.HorizontalScope(GUI.skin.box))
                     {
                         GUI.contentColor = localAchievementData.IsAchieved() ? Color.green : Color.red;
-                        GUIContent content = new GUIContent(AchievementResource.GetTitle(id));
-                        GUILayout.Label(content, GUI.skin.label);
+                        AchievementID id = EnumUtils<AchievementID>.GetValue(localAchievementData.GetApiName());
+                        GUILayout.Label(AchievementResource.GetTitle(id), GUI.skin.label);
                         if (GUILayout.Button("Info", GUI.skin.button, GUILayout.MaxWidth(150f)))
                         {
                             SelectedAchievementData = localAchievementData;
@@ -586,26 +591,22 @@ namespace ModAchievements
         {
             using (var dialogScope = new GUILayout.VerticalScope(GUI.skin.box))
             {             
-                GUI.color = DefaultGuiColor;
-
+                GUI.color = DefaultGuiColor;             
                 AchievementID id = EnumUtils<AchievementID>.GetValue(SelectedAchievementData.GetApiName());
                 StartCoroutine(AchievementResource.LoadTexture(delegate (Texture2D icont)
                 {
                     AchievementResource.SteamAchievementIconTexture = icont;
                 }, AchievementResource.GetIconFileUriString(id)));
 
-                GUI.DrawTexture(new Rect(AchievementResource.SteamAchievementIconTexture.width - 40f, 
-                                                                      20f, 
-                                                                      AchievementResource.SteamAchievementIconTexture.width,
-                                                                      AchievementResource.SteamAchievementIconTexture.height),
-                                                  AchievementResource.SteamAchievementIconTexture);
+                GUI.DrawTexture(new Rect(AchievementInfoScreen.width - 40f, 20f, 65f, 65f), AchievementResource.SteamAchievementIconTexture, ScaleMode.ScaleToFit);
 
-                GUILayout.Label($"Api name/Achievement ID: {AchievementResource.GetApiName(id)}", GUI.skin.label);
-                GUILayout.Label($"Title: {AchievementResource.GetTitle(id)}", GUI.skin.label);
-                GUILayout.Label($"Description: {AchievementResource.GetDescription(id)}", GUI.skin.label);
+                GUILayout.Label(AchievementResource.GetApiName(id), GUI.skin.label);
+                GUILayout.Label(AchievementResource.GetTitle(id), GUI.skin.label);
+                GUILayout.Label(AchievementResource.GetDescription(id), GUI.skin.label);
 
                 using (var dialogButtonsScope = new GUILayout.HorizontalScope(GUI.skin.box))
                 {
+                    GUI.contentColor = SelectedAchievementData.IsAchieved() ? Color.green : Color.red;
                     if (!SelectedAchievementData.IsAchieved())
                     {
                         if (GUILayout.Button("Unlock", GUI.skin.button))
@@ -616,6 +617,10 @@ namespace ModAchievements
                     if (GUILayout.Button("Close", GUI.skin.button))
                     {
                         ToggleShowUI(0);
+                        if (!ShowInfoUI)
+                        {
+                            EnableCursor(false);
+                        }
                     }
                 }
             }
@@ -629,8 +634,7 @@ namespace ModAchievements
                 if (SelectedAchievementData != null && !SelectedAchievementData.IsAchieved())
                 {
                     LocalAchievementsManager.UnlockAchievement(SelectedAchievementData.GetApiName());
-                    ShowHUDBigInfo(HUDBigInfoMessage($"Achievement {SelectedAchievementData.GetApiName()} unlocked!"));
-                    SelectedAchievementData.Load();
+                    ShowHUDBigInfo(HUDBigInfoMessage($"Achievement {SelectedAchievementData.GetApiName()} unlocked!"));                 
                 }
                 else
                 {

@@ -594,13 +594,16 @@ namespace ModAchievements
                     AchievementResource.SteamAchievementIconTexture = icont;
                 }, AchievementResource.GetIconFileUriString(id)));
 
-                GUI.contentColor = SelectedAchievementData.IsAchieved() ? Color.green : Color.red;
-                GUIContent content = new GUIContent(AchievementResource.GetTitle(id), AchievementResource.GetDescription(id));
-                GUILayout.Label(content, GUI.skin.label);
+                GUI.DrawTexture(new Rect(AchievementResource.SteamAchievementIconTexture.width - 40f, 
+                                                                      20f, 
+                                                                      AchievementResource.SteamAchievementIconTexture.width,
+                                                                      AchievementResource.SteamAchievementIconTexture.height),
+                                                  AchievementResource.SteamAchievementIconTexture);
 
-                GUI.DrawTexture(new Rect(AchievementInfoScreen.x + 20f, 40f, AchievementResource.SteamAchievementIconTexture.width, AchievementResource.SteamAchievementIconTexture.height),
-                    AchievementResource.SteamAchievementIconTexture);
-             
+                GUILayout.Label($"Api name/Achievement ID: {AchievementResource.GetApiName(id)}", GUI.skin.label);
+                GUILayout.Label($"Title: {AchievementResource.GetTitle(id)}", GUI.skin.label);
+                GUILayout.Label($"Description: {AchievementResource.GetDescription(id)}", GUI.skin.label);
+
                 using (var dialogButtonsScope = new GUILayout.HorizontalScope(GUI.skin.box))
                 {
                     if (!SelectedAchievementData.IsAchieved())

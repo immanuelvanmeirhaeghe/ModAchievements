@@ -246,6 +246,11 @@ namespace ModAchievements
             }
         }
 
+        public static string GetApiName(AchievementID id)
+        {
+            return id.ToString();
+        }
+
         public static string GetTitle(AchievementID id)
         {
             string Title;

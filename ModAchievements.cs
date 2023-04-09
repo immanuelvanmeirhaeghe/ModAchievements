@@ -7,12 +7,16 @@ using System.Text;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace ModAchievements
 {
-    /// <summary>
-    /// ModAchievements is a mod for Green Hell that allows a player to manage Steam achievements.
-    /// Press Alpha9 (default) or the key configurable in ModAPI to open the mod screen.
+     /// <summary>
+     /// ModAchievements is a mod for Green Hell that allows a player to manage Steam achievements.
+    ///  Press [Alpha9] or the key configurable with ModAPI to open or close the main UI.
+    ///  Click[Toggle stats] to open or close the developer debug achievements screen.Click [reset achievements] to reset all player achievements and stats.
+    ///  Click[Load achievements] button.
+    ///  Player unlocked achievements are green and locked achievements are red, with right next to it the button the player can click to unlock the achievement.
     /// </summary>
     public class ModAchievements : MonoBehaviour
     {
@@ -74,7 +78,7 @@ namespace ModAchievements
                         {
                             if (xmlReader["ID"] == ModName)
                             {
-                                if (xmlReader.ReadToFollowing(nameof(Button)) && xmlReader["ID"] == buttonId)
+                                if (xmlReader.ReadToFollowing("Button") && xmlReader["ID"] == buttonId)
                                 {
                                     configuredKeybinding = xmlReader.ReadElementContentAsString();
                                 }

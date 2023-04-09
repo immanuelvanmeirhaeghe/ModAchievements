@@ -12,7 +12,7 @@
     <EN>ModAchievements</EN>
   </Name>
   <Description>
-    <EN>ModAchievements is a mod for Green Hell that allows a player to manage Steam achievements.</EN>
+    <EN>ModAchievements is a mod for Green Hell that allows a player to manage Steam achievements. Press [Alpha9] or the key configurable with ModAPI to open or close the main UI. Press [Alpha9] or the key configurable with ModAPI to open or close the main UI.</EN>
   </Description>
   <Version>1.0.0.5</Version>
 </Mod>

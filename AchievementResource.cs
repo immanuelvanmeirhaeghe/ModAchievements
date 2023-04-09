@@ -11,254 +11,223 @@ namespace ModAchievements
     public static class AchievementResource
     {
         public static readonly string SteamAchievementIconBaseUri = $"https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/815370/";
-        public static string SteamAchievementIconFileUriString;
-        public static Texture2D SteamAchievementIconTexture;
+        public static string SteamAchievementIconFileUriString { get; set; }
+        public static Texture2D SteamAchievementIconTexture { get; set; }
 
         public static string GetIconFileUriString(AchievementID id)
         {
-            string iconFileUriString;
+            string IconFileUriString;
             switch (id)
             {
                 case AchievementID.ACH_TUTORIAL:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}9eee0f2737e3505f42e990aa37b946ba6a505ace.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}9eee0f2737e3505f42e990aa37b946ba6a505ace.jpg";
                     break;
                 case AchievementID.ACH_AYAHUASKA:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}7d48ff16f071bab1810bf23d10824e949f725f8b.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}7d48ff16f071bab1810bf23d10824e949f725f8b.jpg";
                     break;
                 case AchievementID.ACH_GOOD_ENDING:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}ddac862e7273d838e86975a3fb96e40bb67c0b16.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}ddac862e7273d838e86975a3fb96e40bb67c0b16.jpg";
                     break;
                 case AchievementID.ACH_BAD_ENDING:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}b03649f43c09f0f7c29af7a17a9d4c42bb14e7cd.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}b03649f43c09f0f7c29af7a17a9d4c42bb14e7cd.jpg";
                     break;
                 case AchievementID.ACH_GREEDY:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}adc3eceb6ba2589b75b30b917d1fa193ef6f59f0.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}adc3eceb6ba2589b75b30b917d1fa193ef6f59f0.jpg";
                     break;
                 case AchievementID.ACH_ENDING_GREENHELL:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}0c149b315e808c7294b9ef34dd2500def5d5c28a.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}0c149b315e808c7294b9ef34dd2500def5d5c28a.jpg";
                     break;
                 case AchievementID.ACH_TRAVEL:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}3d3d02fc0e5b463ed75d2e6e433da616fda7834b.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}3d3d02fc0e5b463ed75d2e6e433da616fda7834b.jpg";
                     break;
                 case AchievementID.ACH_START_FIRE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}07d95d570f03ba93dd94365147a55c22906cb328.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}07d95d570f03ba93dd94365147a55c22906cb328.jpg";
                     break;
                 case AchievementID.ACH_WELCOME:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}cec0569cafe5e282f13f55f25f062b49c1f5f41b.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}cec0569cafe5e282f13f55f25f062b49c1f5f41b.jpg";
                     break;
                 case AchievementID.ACH_SURVIVE_10:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}f25676215bfaaf27b06b39f388fad16d1b396d02.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}f25676215bfaaf27b06b39f388fad16d1b396d02.jpg";
                     break;
                 case AchievementID.ACH_JUST_DIE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}538d9164de02f1f1becc25727a99c4d9a3c33fbf.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}538d9164de02f1f1becc25727a99c4d9a3c33fbf.jpg";
                     break;
                 case AchievementID.ACH_CANIBAL:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}1d6725a911ecb2236852a80ee32b1fd6dc08744b.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}1d6725a911ecb2236852a80ee32b1fd6dc08744b.jpg";
                     break;
                 case AchievementID.ACH_KILL_TRIBE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}4bb2632dac0ce10bd6ede691a694f8d26ed0d03f.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}4bb2632dac0ce10bd6ede691a694f8d26ed0d03f.jpg";
                     break;
                 case AchievementID.ACH_1ST_TOOL:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}b721c3ad4c5bfa8daccc110510ac4afa8d134b53.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}b721c3ad4c5bfa8daccc110510ac4afa8d134b53.jpg";
                     break;
                 case AchievementID.ACH_VEGAN:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}54f083013b95dbba22955c590ecc9a85ab12dd03.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}54f083013b95dbba22955c590ecc9a85ab12dd03.jpg";
                     break;
                 case AchievementID.ACH_PACIFIST:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}1acca53a93784d3411079184ef8f37c585926c60.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}1acca53a93784d3411079184ef8f37c585926c60.jpg";
                     break;
                 case AchievementID.ACH_WILLSON:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}24ea232dff9cf50e2f9520a19aabf5c90d0e2361.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}24ea232dff9cf50e2f9520a19aabf5c90d0e2361.jpg";
                     break;
                 case AchievementID.ACH_MAX_SKILL:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}54f083013b95dbba22955c590ecc9a85ab12dd03.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}54f083013b95dbba22955c590ecc9a85ab12dd03.jpg";
                     break;
                 case AchievementID.ACH_IRONMAN:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}1959e8c3fe87ac893f773da2132e3361cc3a94e8.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}1959e8c3fe87ac893f773da2132e3361cc3a94e8.jpg";
                     break;
                 case AchievementID.ACH_SAVEGAME:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}e202c4dc5e42b075aba166cd06627b94e48d918a.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}e202c4dc5e42b075aba166cd06627b94e48d918a.jpg";
                     break;
                 case AchievementID.ACH_FIND_STORYCAVE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}882c15a5c6ed442cd9d1ae7151c8ada83ddf54f4.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}882c15a5c6ed442cd9d1ae7151c8ada83ddf54f4.jpg";
                     break;
                 case AchievementID.ACH_SANITY_TRIBE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}e08a8f3b2b4c211f47301a9723572f27e9698041.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}e08a8f3b2b4c211f47301a9723572f27e9698041.jpg";
                     break;
                 case AchievementID.ACH_LEECHES:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}82250f4a905f95016a8fc59e90803a7e73a6129f.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}82250f4a905f95016a8fc59e90803a7e73a6129f.jpg";
                     break;
                 case AchievementID.ACH_HOME:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}af12a4562fe45bcf9bdce5204c6e301266fc8ee1.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}af12a4562fe45bcf9bdce5204c6e301266fc8ee1.jpg";
                     break;
                 case AchievementID.ACH_CURE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}f9bfc0c3853eadd43850ffcc0e47e26954ea6b14.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}f9bfc0c3853eadd43850ffcc0e47e26954ea6b14.jpg";
                     break;
                 case AchievementID.ACH_SAFE_WATER:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}9b648cf8b09e1c167a0c5d02be2b9e92d92ea966.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}9b648cf8b09e1c167a0c5d02be2b9e92d92ea966.jpg";
                     break;
                 case AchievementID.ACH_INSOMIA:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}bb3f32820073357b16cb3a6abd56b72fbdff6ed3.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}bb3f32820073357b16cb3a6abd56b72fbdff6ed3.jpg";
                     break;
                 case AchievementID.ACH_FIREPLACE_GOING:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}91e032b74cec0b764977d7043ea7086f983ba73e.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}91e032b74cec0b764977d7043ea7086f983ba73e.jpg";
                     break;
                 case AchievementID.ACH_TURTLE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}2e6452b2725d1d15dbec5cf0871ae16d3aa966a2.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}2e6452b2725d1d15dbec5cf0871ae16d3aa966a2.jpg";
                     break;
                 case AchievementID.ACH_FISHING:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}3fb836d98fc2ae1e1309ce3d541a615db3cf7a6d.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}3fb836d98fc2ae1e1309ce3d541a615db3cf7a6d.jpg";
                     break;
                 case AchievementID.ACH_KING_OF_THE_JUNGLE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}fb98947cabdcd410db35fc38870b350c247ffef1.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}fb98947cabdcd410db35fc38870b350c247ffef1.jpg";
                     break;
                 case AchievementID.ACH_SNOWMAN:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}479b799bf67e8bf7b16310f3b36fe2304750f36a.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}479b799bf67e8bf7b16310f3b36fe2304750f36a.jpg";
                     break;
                 case AchievementID.ACH_ALL_FIRE_TOOLS:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}04cd5412c0a324a7f76603d387eb11174ffccc6f.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}04cd5412c0a324a7f76603d387eb11174ffccc6f.jpg";
                     break;
                 case AchievementID.ACH_CATCH_AT_ONCE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}92903825193ca8578b3b2a44afe93e28b17b7c83.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}92903825193ca8578b3b2a44afe93e28b17b7c83.jpg";
                     break;
                 case AchievementID.ACH_FARMER:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}c69dd38e2faa031bbba4c86edb3002e975e74aa5.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}c69dd38e2faa031bbba4c86edb3002e975e74aa5.jpg";
                     break;
                 case AchievementID.ACH_ALL_READABLE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}49121d04b806a5cdbf77773c9ea5c6e7a54c7d7f.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}49121d04b806a5cdbf77773c9ea5c6e7a54c7d7f.jpg";
                     break;
                 case AchievementID.ACH_MAGGOT_WOUND:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}deb806485c0a3dd2b50b11b02c336acff9430107.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}deb806485c0a3dd2b50b11b02c336acff9430107.jpg";
                     break;
                 case AchievementID.ACH_ALL_SICKNESS:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}bd3fd7d4fa4d6b9f7f9fa3ede94d3580d5fc652a.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}bd3fd7d4fa4d6b9f7f9fa3ede94d3580d5fc652a.jpg";
                     break;
                 case AchievementID.ACH_ALL_CHALLENGES:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}aff8c61825b9f758e3351912972ad6709d252387.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}aff8c61825b9f758e3351912972ad6709d252387.jpg";
                     break;
                 case AchievementID.ACH_FULL_MAP:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}709cf04c4bc39012d62e9bc37b03dad0b34dc289.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}709cf04c4bc39012d62e9bc37b03dad0b34dc289.jpg";
                     break;
-
                 case AchievementID.ACH_NEW_FRIEND:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}37f56f7404924d249b20af2525e9a5d958635af3.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}37f56f7404924d249b20af2525e9a5d958635af3.jpg";
                     break;
-
                 case AchievementID.ACH_GAIN_REPUTATION_800_PLANTING:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}31b698211baae674775fe1d64f19a23f86b90c7d.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}31b698211baae674775fe1d64f19a23f86b90c7d.jpg";
                     break;
-
                 case AchievementID.ACH_GAIN_REPUTATION_800_HUNTING:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}a3639fdedd73b17a123e413b2886362e4c6056df.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}a3639fdedd73b17a123e413b2886362e4c6056df.jpg";
                     break;
-
                 case AchievementID.ACH_GAIN_REPUTATION_800_FISHING:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}86bf0982462efe781070f79517b80e4b8ea16778.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}86bf0982462efe781070f79517b80e4b8ea16778.jpg";
                     break;
-
                 case AchievementID.ACH_BRING_9_KIDS_BACK:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}e06dcc0de0e037dc1b5f6c3ee60eff8727cd3479.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}e06dcc0de0e037dc1b5f6c3ee60eff8727cd3479.jpg";
                     break;
-
                 case AchievementID.ACH_HEAL_10_TRIBES:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}b71877865b6a4982fec951bfe7a4e1eb47e98d7c.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}b71877865b6a4982fec951bfe7a4e1eb47e98d7c.jpg";
                     break;
-
                 case AchievementID.ACH_BURN_10_CORPSES:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}8b1af3e9df40e773ea1bc200176b934273c6d3aa.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}8b1af3e9df40e773ea1bc200176b934273c6d3aa.jpg";
                     break;
-
                 case AchievementID.ACH_BURN_10_TRASHES:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}5abb755f04a82d31f965644db38d82cf9191108a.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}5abb755f04a82d31f965644db38d82cf9191108a.jpg";
                     break;
-
                 case AchievementID.ACH_HELP_5_FISHERMEN:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}569ddfbcc7d15584b1c5b660eac599b929feadab.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}569ddfbcc7d15584b1c5b660eac599b929feadab.jpg";
                     break;
-
                 case AchievementID.ACH_REBUILD_10_TOTEMS:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}c373601279caf1b02e7b4812eb2f4d3e6a1e3622.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}c373601279caf1b02e7b4812eb2f4d3e6a1e3622.jpg";
                     break;
-
                 case AchievementID.ACH_FREE_9_WOMEN:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}a18b8f2c103958026ddd79557f84cc1f9e7ef8d1.jpg";
-                    break; ;
-
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}a18b8f2c103958026ddd79557f84cc1f9e7ef8d1.jpg";
+                    break;
                 case AchievementID.ACH_FIND_5_MAPS:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}cae00293da801cd51d14e94625f58e97fc5a2304.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}cae00293da801cd51d14e94625f58e97fc5a2304.jpg";
                     break;
-
                 case AchievementID.ACH_COMPLETE_SOA3_STORY:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}40f7ced435b743c40a6537691e0addd721930bbd.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}40f7ced435b743c40a6537691e0addd721930bbd.jpg";
                     break;
-
                 case AchievementID.RAPORT_BACK_TO_THE_BASE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}e4e763ea98e9ad1547be590c347c0b39a7dcba96.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}e4e763ea98e9ad1547be590c347c0b39a7dcba96.jpg";
                     break;
-
                 case AchievementID.COMPLETE_MUAGI_TRIAL:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}fc0b52f3ed73f6370aeafdb70e9eb04365f3fa7e.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}fc0b52f3ed73f6370aeafdb70e9eb04365f3fa7e.jpg";
                     break;
-
                 case AchievementID.COMPLETE_HABBAKU_TRIAL:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}136c115abab23dbba0dc53e083d94d8c91c9afce.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}136c115abab23dbba0dc53e083d94d8c91c9afce.jpg";
                     break;
-
                 case AchievementID.COMPLETE_UNGARACA_TRIAL:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}362f95a7126bdb3eb5b337e041b3680e1d5ee6d5.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}362f95a7126bdb3eb5b337e041b3680e1d5ee6d5.jpg";
                     break;
-
                 case AchievementID.REACH_YABAHUACA_VILLAGE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}249ad341167f7a5557e2f5c4f2b368bcdf4817a2.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}249ad341167f7a5557e2f5c4f2b368bcdf4817a2.jpg";
                     break;
-
                 case AchievementID.PASS_YABAHUACA_TRIAL:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}6c5fe7e1e0291cf3f7c690cfbd7f2effc85db4f5.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}6c5fe7e1e0291cf3f7c690cfbd7f2effc85db4f5.jpg";
                     break;
-
                 case AchievementID.DISCOVER_VILLAGE_MUAGI:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}5aef54d40651ccd3d93b18a475ba6b9fd6909553.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}5aef54d40651ccd3d93b18a475ba6b9fd6909553.jpg";
                     break;
-
                 case AchievementID.DISCOVER_VILLAGE_HABBAKU:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}2638df07a1d4f915972c66ef73bd111a611d26b4.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}2638df07a1d4f915972c66ef73bd111a611d26b4.jpg";
                     break;
-
                 case AchievementID.DISCOVER_VILLAGE_UNGARACA:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}5fe325cf4f2dffb8c27a176a994140417bc3bf7f.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}5fe325cf4f2dffb8c27a176a994140417bc3bf7f.jpg";
                     break;
-
                 case AchievementID.COMPLETE_ALL_MUAGI_LEGENDS:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}22c9698a102584bbc483185cac223986c96bba30.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}22c9698a102584bbc483185cac223986c96bba30.jpg";
                     break;
-
                 case AchievementID.COMPLETE_ALL_UNGARACA_LEGENDS:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}80c59e16e2d6a54e7dd9187d58e471dbf5672608.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}80c59e16e2d6a54e7dd9187d58e471dbf5672608.jpg";
                     break;
-
                 case AchievementID.COMPLETE_ALL_HABBAKU_LEGENDS:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}45ead9353a39a3d30e145f8659014b50b26fc46c.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}45ead9353a39a3d30e145f8659014b50b26fc46c.jpg";
                     break;
-
                 case AchievementID.COMPLETE_ALL_SOA_ACHIEVEMENTS:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}984b3652091d8b2706946c350698e83c38c998e6.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}984b3652091d8b2706946c350698e83c38c998e6.jpg";
                     break;
-
                 case AchievementID.ACH_EMOTIONAL_SUPPORT:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}08368760353c5343864dcad63a9dcde897afdf04.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}08368760353c5343864dcad63a9dcde897afdf04.jpg";
                     break;
-
                 case AchievementID.ACH_CIRCLE_OF_LIFE:
-                    iconFileUriString = $"{SteamAchievementIconBaseUri}4004690c400fc07675da513944e8d9915471bf90.jpg";
+                    IconFileUriString = $"{SteamAchievementIconBaseUri}4004690c400fc07675da513944e8d9915471bf90.jpg";
                     break;
-
-
                 default:
-                    iconFileUriString = string.Empty;
+                    IconFileUriString = string.Empty;
                     break;
-            }
-            SteamAchievementIconFileUriString = iconFileUriString;
-            return iconFileUriString;
+            }         
+            return IconFileUriString;
         }
 
         public static IEnumerator LoadTexture(Action<Texture2D> action, string url)
@@ -766,5 +735,6 @@ namespace ModAchievements
             }
             return Description;
         }
+
     }
 }

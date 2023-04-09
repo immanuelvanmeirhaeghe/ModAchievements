@@ -598,7 +598,7 @@ namespace ModAchievements
                     AchievementResource.SteamAchievementIconTexture = icont;
                 }, AchievementResource.GetIconFileUriString(id)));
 
-                GUI.DrawTexture(new Rect(AchievementInfoScreen.width - 40f, 20f, 65f, 65f), AchievementResource.SteamAchievementIconTexture, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(new Rect(AchievementInfoScreen.width - 85f, 0f, 65f, 65f), AchievementResource.SteamAchievementIconTexture, ScaleMode.ScaleToFit);
 
                 GUILayout.Label(AchievementResource.GetApiName(id), GUI.skin.label);
                 GUILayout.Label(AchievementResource.GetTitle(id), GUI.skin.label);
@@ -616,11 +616,7 @@ namespace ModAchievements
                     }
                     if (GUILayout.Button("Close", GUI.skin.button))
                     {
-                        ToggleShowUI(0);
-                        if (!ShowInfoUI)
-                        {
-                            EnableCursor(false);
-                        }
+                        ToggleShowUI(0);                     
                     }
                 }
             }

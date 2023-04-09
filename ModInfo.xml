@@ -5,14 +5,14 @@
       <EN>ModKeybindingId</EN>
     </Name>
     <Description>
-      <EN>ModKeybindingId</EN>
+      <EN>Key bound to mod UI</EN>
     </Description>
   </Button>
   <Name>
     <EN>ModAchievements</EN>
   </Name>
   <Description>
-    <EN>ModAchievements is a mod for Green Hell that allows a player to manage Steam achievements. Press [Alpha9] or the key configurable with ModAPI to open or close the main UI. Press [Alpha9] or the key configurable with ModAPI to open or close the main UI.</EN>
+    <EN>ModAchievements is a mod for Green Hell that allows a player to manage Steam achievements.</EN>
   </Description>
   <Version>1.0.0.5</Version>
 </Mod>
